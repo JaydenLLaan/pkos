@@ -89,6 +89,7 @@ try:
     command('systemd-run --user --collect --unit=pkos-greeter-test env QT_QPA_PLATFORM=xcb sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/pkos')
     command('sleep 5; pgrep -af "sddm-greeter-qt6 --test-mode" && journalctl --user -u pkos-greeter-test --no-pager | tail -30', 60)
     screenshot('sddm-theme')
+    command('! journalctl --user -u pkos-greeter-test --no-pager | grep -Ei "Unexpected token|theme cannot be loaded|Failed to load.*theme|Main.qml:[0-9]+:[0-9]+:"')
     command('pkill -f "sddm-greeter-qt6 --test-mode"')
     command('systemd-run --user --collect --unit=pkos-installer-test pk-install')
     command('sleep 15; pgrep -a calamares; journalctl --user -u pkos-installer-test --no-pager | tail -60', 60)

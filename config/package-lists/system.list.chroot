@@ -6,6 +6,8 @@ live-config-systemd
 live-tools
 user-setup
 systemd-sysv
+systemd-timesyncd
+util-linux-extra
 dbus-user-session
 sudo
 locales

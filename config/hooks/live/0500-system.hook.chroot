@@ -13,7 +13,7 @@ XKBVARIANT=""
 XKBOPTIONS=""
 BACKSPACE="guess"
 EOF
-systemctl enable NetworkManager.service bluetooth.service sddm.service fstrim.timer
+systemctl enable NetworkManager.service bluetooth.service sddm.service fstrim.timer systemd-timesyncd.service
 systemctl set-default graphical.target
 systemctl disable NetworkManager-wait-online.service || true
 ln -sf /lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
