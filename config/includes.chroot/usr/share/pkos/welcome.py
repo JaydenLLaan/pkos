@@ -3,6 +3,7 @@ from pathlib import Path
 import subprocess
 import sys
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget
 
 live = 'boot=live' in Path('/proc/cmdline').read_text().split()
@@ -11,6 +12,8 @@ shown = state / 'welcome-shown'
 if '--autostart' in sys.argv and shown.exists() and not live:
     sys.exit(0)
 app = QApplication(sys.argv)
+app.setDesktopFileName('pk-welcome')
+app.setWindowIcon(QIcon('/usr/share/icons/hicolor/scalable/apps/pkos.svg'))
 window = QWidget()
 window.setWindowTitle('pkOS')
 window.setFixedSize(580, 480)

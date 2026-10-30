@@ -10,6 +10,7 @@ toolBarFont=Inter,10,-1,5,50,0,0,0,0,0
 Theme=breeze-dark
 [KDE]
 LookAndFeelPackage=org.pkos.desktop
+widgetStyle=Breeze
 SingleClick=false
 [WM]
 activeFont=Inter,10,-1,5,50,0,0,0,0,0

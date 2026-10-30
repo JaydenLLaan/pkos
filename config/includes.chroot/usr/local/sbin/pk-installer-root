@@ -9,5 +9,8 @@ if [ ! -d /sys/firmware/efi ]; then
   exit 1
 fi
 export QT_QPA_PLATFORM=xcb
-exec /usr/bin/calamares
+export QT_QPA_PLATFORMTHEME=kde
+export QT_STYLE_OVERRIDE=Breeze
+export KDE_SESSION_VERSION=6
+exec /usr/bin/calamares "$@"
 

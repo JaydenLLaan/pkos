@@ -1,6 +1,27 @@
 #!/bin/bash
 set -euo pipefail
 test "${1:-}" = --calamares-target
+# Keep the new user's Wayland layout in sync with the installer's selection.
+python3 - <<'PY'
+import configparser, os, pwd, shlex
+from pathlib import Path
+values={}
+for line in Path('/etc/default/keyboard').read_text().splitlines():
+    key, sep, value=line.partition('=')
+    if sep and key.startswith('XKB'):
+        parts=shlex.split(value)
+        values[key]=parts[0] if parts else ''
+users=[p for p in pwd.getpwall() if 1000 <= p.pw_uid < 65534 and p.pw_dir.startswith('/home/')]
+for directory, uid, gid in [('/etc/skel',0,0), *[(p.pw_dir,p.pw_uid,p.pw_gid) for p in users]]:
+    path=Path(directory)/'.config/kxkbrc'
+    config=configparser.ConfigParser(interpolation=None)
+    config.optionxform=str
+    config.read(path)
+    config['Layout']={'LayoutList':values.get('XKBLAYOUT','gb'), 'Model':values.get('XKBMODEL','pc105'), 'VariantList':values.get('XKBVARIANT',''), 'Options':values.get('XKBOPTIONS',''), 'Use':'true', 'ResetOldOptions':'true'}
+    path.parent.mkdir(parents=True,exist_ok=True)
+    with path.open('w') as stream: config.write(stream,space_around_delimiters=False)
+    os.chown(path,uid,gid)
+PY
 # Persist EFI fallback updates alongside the named pkOS EFI entry.
 echo 'grub-efi-amd64 grub2/force_efi_extra_removable boolean true' | debconf-set-selections
 # Debconf and GRUB use this distributor for subsequent package upgrades.

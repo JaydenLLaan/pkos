@@ -50,6 +50,11 @@ scheme += '[WM]\nactiveBackground=21,29,38\nactiveForeground=237,242,247\ninacti
 p=root/'usr/share/color-schemes/pkOS.colors'
 p.parent.mkdir(parents=True, exist_ok=True)
 p.write_text(scheme)
+# KDE's ColorScheme key names a scheme; a finished first login also needs
+# its resolved palette in kdeglobals (including for root-run Qt installers).
+globals_path=root/'etc/skel/.config/kdeglobals'
+with globals_path.open('a') as stream:
+    stream.write('\n'+scheme[scheme.index('[Colors:'):])
 # Populate system-wide defaults too, while preserving user overrides.
-for name in ['kdeglobals', 'kwinrc', 'kcminputrc', 'ksplashrc', 'baloofilerc']:
+for name in ['kdeglobals', 'kwinrc', 'kcminputrc', 'ksplashrc', 'baloofilerc', 'kxkbrc', 'plasmarc']:
     copy(root/'etc/skel/.config'/name, 'etc/xdg/'+name)

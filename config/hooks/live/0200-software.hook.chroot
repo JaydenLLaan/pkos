@@ -19,7 +19,23 @@ EOF
     rm -f /etc/apt/sources.list.d/vscodium.sources
   fi
 fi
-if ! command -v codium >/dev/null; then
+if command -v codium >/dev/null; then
+  if [ ! -f /usr/share/applications/codium.desktop ]; then
+    cat > /usr/share/applications/codium.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=VSCodium
+GenericName=Code Editor
+Exec=codium %F
+Icon=accessories-text-editor
+Terminal=false
+StartupNotify=true
+StartupWMClass=VSCodium
+Categories=Development;IDE;TextEditor;
+MimeType=text/plain;
+EOF
+  fi
+else
   sed -i 's|applications:codium.desktop|applications:org.kde.kate.desktop|g' \
     /usr/share/plasma/look-and-feel/org.pkos.desktop/contents/layouts/org.kde.plasma.desktop-layout.js
 fi

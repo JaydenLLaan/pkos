@@ -142,6 +142,11 @@ ISO and emits a SHA256. The runner then boots the actual ISO under QEMU/OVMF,
 checks Plasma Wayland, services, tools and NVIDIA DKMS, and captures a screenshot
 before publishing it. Hardware-only checks are in [TESTING.md](TESTING.md).
 
+CI also drives Calamares through an erase-disk installation on a disposable
+virtual disk, boots that disk with the ISO detached, and checks the installed
+desktop, sudo account, EFI loader and swap. The live boot uses a raw virtual USB
+device to exercise the hybrid image's USB boot path.
+
 The build targets the named Trixie suite and its security/updates repositories.
 It is repeatable from a clean clone, but **not bit-for-bit reproducible**:
 packages, container tags and optional vendor repositories receive updates.

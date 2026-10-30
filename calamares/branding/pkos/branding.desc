@@ -14,7 +14,7 @@ strings:
   bootloaderEntryName: pkOS
   productUrl: https://github.com/JaydenLLaan/pkos
 images:
-  productLogo: wordmark.png
+  productLogo: logo.png
   productIcon: logo.png
   productWelcome: welcome.png
 style:

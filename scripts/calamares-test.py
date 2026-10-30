@@ -10,7 +10,7 @@ import pyatspi
 
 if not os.path.exists('/sys/class/dmi/id/product_name') or 'QEMU' not in open('/sys/class/dmi/id/sys_vendor').read():
     raise SystemExit('This destructive integration test requires a QEMU virtual machine.')
-process = subprocess.Popen(['calamares', '-d'], stdout=open('/tmp/pkos-install-test.log','w'), stderr=subprocess.STDOUT)
+process = subprocess.Popen(['/usr/local/sbin/pk-installer-root', '-d'], stdout=open('/tmp/pkos-install-test.log','w'), stderr=subprocess.STDOUT)
 
 def walk(node, depth=0):
     if depth > 22:

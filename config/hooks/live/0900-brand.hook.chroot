@@ -20,6 +20,13 @@ ln -s ../usr/lib/os-release /etc/os-release
 printf 'pkOS 1.0 \\n \\l\n' > /etc/issue
 printf 'pkOS 1.0\n' > /etc/issue.net
 printf '\npkOS — a quiet place to build.\nRun pk-setup to configure your development environment.\n\n' > /etc/motd
+# Keep the dynamic console greeting consistent with the static MOTD.
+if [ -f /etc/update-motd.d/10-uname ]; then
+  dpkg-divert --local --add --rename --divert /etc/update-motd.d/10-uname.pkbase /etc/update-motd.d/10-uname
+  chmod -x /etc/update-motd.d/10-uname.pkbase
+  printf '#!/bin/sh\nprintf "pkOS 1.0\\n"\n' > /etc/update-motd.d/10-uname
+  chmod 755 /etc/update-motd.d/10-uname
+fi
 # Keep package licensing/copyright and APT origin metadata intact.
 install -d /usr/share/pkos
 dpkg-query -W -f='${Package}\t${Version}\n' > /usr/share/pkos/package-manifest.txt

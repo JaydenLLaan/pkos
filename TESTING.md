@@ -11,6 +11,10 @@
 - [ ] NetworkManager and SDDM are active; Bluetooth is enabled (VM has no radio).
 - [ ] Desktop has the pkOS panel; screenshot saved as a diagnostic artifact.
 - [ ] uv, Node, Go and Neovim run in the booted environment.
+- [ ] Calamares completes an erase-disk install on a disposable 48 GiB disk.
+- [ ] The installed disk boots with the ISO detached, into Plasma Wayland.
+- [ ] Installed user has sudo, swap is active, EFI and root are mounted, and
+      the live installer launcher is gone.
 
 CI has no RTX 3050, Wi-Fi radio, trackpad or Acer firmware. A successful build
 does not claim those physical checks have passed. Record observations below.
