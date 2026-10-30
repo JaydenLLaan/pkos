@@ -9,6 +9,7 @@ import socket
 import subprocess
 import sys
 import time
+import zlib
 import pexpect
 from PIL import Image
 
@@ -83,8 +84,9 @@ try:
     # Test dependencies are installed only in the live overlay, not in the ISO.
     command('sudo apt-get update >/tmp/pkos-test-apt.log 2>&1 && sudo apt-get install -y --no-install-recommends python3-pyatspi xdotool >>/tmp/pkos-test-apt.log 2>&1', 240)
     command('sudo pkill -x calamares')
-    payload = base64.b64encode(Path('scripts/calamares-test.py').read_bytes()).decode()
-    command("printf '%s' '"+payload+"' | base64 -d >/tmp/pkos-calamares-test.py")
+    # Keep the command below the serial TTY's canonical input line limit.
+    payload = base64.b64encode(zlib.compress(Path('scripts/calamares-test.py').read_bytes())).decode()
+    command("printf '%s' '"+payload+"' | base64 -d | python3 -c 'import sys,zlib; sys.stdout.buffer.write(zlib.decompress(sys.stdin.buffer.read()))' >/tmp/pkos-calamares-test.py")
     try:
         command('sudo env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") QT_QPA_PLATFORM=xcb QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1 dbus-run-session -- python3 /tmp/pkos-calamares-test.py', 1500)
     finally:
