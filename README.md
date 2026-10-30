@@ -172,6 +172,12 @@ Do not run the privileged builder on the Apple Silicon Mac. To run on a
 separate Linux amd64 build machine, mount this clone at `/work` in a privileged
 `debian:trixie` container and execute `bash scripts/build.sh` there.
 
+For a quick SDDM-only check, run `gh workflow run preview-sddm.yml`. That workflow
+renders the source theme with Xvfb and software rendering inside a Trixie
+container, rejects QML errors, and uploads `sddm-preview` with a PNG and log.
+It builds no ISO and needs no physical GPU. The full ISO workflow separately
+verifies the packaged theme in the booted live system.
+
 After installation, update with `sudo apt update && sudo apt upgrade`. Keep
 the kernel and NVIDIA module compatible and leave the matching headers
 installed. Branding files use local dpkg diversions to preserve pkOS identity
