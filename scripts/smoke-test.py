@@ -68,6 +68,7 @@ try:
     result = vm.expect([r'Password:', r'pkos@pkos'])
     if result == 0:
         vm.sendline('live')
+    vm.expect(r'\$ ', timeout=90)
     command('sudo -n true')
     command('test -d /sys/firmware/efi && grep -q \'ID=pkos\' /etc/os-release')
     command('systemctl is-active NetworkManager sddm; systemctl is-enabled bluetooth')
@@ -116,6 +117,7 @@ try:
     vm.sendline('pkostest')
     vm.expect('Password:')
     vm.sendline('pkos-test-123')
+    vm.expect(r'\$ ', timeout=90)
     command('grep -q ID=pkos /etc/os-release && ! grep -qw boot=live /proc/cmdline')
     command('for n in $(seq 1 90); do pgrep -x plasmashell >/dev/null && break; sleep 2; done; pgrep -a plasmashell; pgrep -a kwin_wayland',240)
     command("printf 'pkos-test-123\\n' | sudo -S -p '' true")
