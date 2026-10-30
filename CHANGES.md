@@ -37,6 +37,8 @@
 - Expanded existing real-ISO boot/install checks with layout assertions and
   an installed Kitty/VSCodium workspace capture. Hardware/software functions
   and installer flow are retained.
+- Follow the editor package's canonical desktop ID so its running window
+  groups with the pinned dock icon after the upstream desktop-entry rename.
 
 ## Future changes
 

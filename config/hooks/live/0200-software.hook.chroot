@@ -20,7 +20,13 @@ EOF
   fi
 fi
 if command -v codium >/dev/null; then
-  if [ ! -f /usr/share/applications/codium.desktop ]; then
+  # Recent upstream releases changed their desktop ID. Pin the shipped entry
+  # so Plasma groups its running windows with the launcher rather than twice.
+  if [ -f /usr/share/applications/com.visualstudio.CodeOSS.desktop ]; then
+    sed -i 's|applications:codium.desktop|applications:com.visualstudio.CodeOSS.desktop|g' \
+      /usr/share/plasma/look-and-feel/org.pkos.desktop/contents/layouts/org.kde.plasma.desktop-layout.js
+    sed -i 's/^Icon=.*/Icon=vscodium/' /usr/share/applications/com.visualstudio.CodeOSS.desktop
+  elif [ ! -f /usr/share/applications/codium.desktop ]; then
     cat > /usr/share/applications/codium.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
