@@ -37,7 +37,7 @@ def click(name, timeout=60):
     end=time.time()+timeout
     while time.time()<end:
         for node in nodes():
-            if node.getRoleName()=='push button' and node.name.replace('&','').strip().lower()==name.lower() and visible(node) and node.getState().contains(pyatspi.STATE_ENABLED):
+            if node.getRoleName() in ['push button','button'] and node.name.replace('&','').strip().lower()==name.lower() and visible(node) and node.getState().contains(pyatspi.STATE_ENABLED):
                 action=node.queryAction()
                 action.doAction(0)
                 print('Clicked',name,flush=True)
