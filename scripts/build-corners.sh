@@ -2,7 +2,7 @@
 # Build only on the x86_64 Trixie CI builder, against its matching KWin ABI.
 set -euo pipefail
 target=$(realpath "$1")
-apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules \
+apt-get install -y --no-install-recommends cmake make g++ gettext extra-cmake-modules \
   kwin-dev qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev \
   libkf6kcmutils-dev libkf6i18n-dev libepoxy-dev libxcb1-dev
 source_dir=$(mktemp -d)
