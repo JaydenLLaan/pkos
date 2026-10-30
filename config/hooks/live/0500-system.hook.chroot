@@ -22,7 +22,7 @@ echo /usr/bin/sddm > /etc/X11/default-display-manager
 for kernel in /lib/modules/*; do
   version=${kernel##*/}
   dkms autoinstall -k "$version"
-  modinfo -k "$version" nvidia >/dev/null
+  modinfo -k "$version" nvidia-current >/dev/null
   depmod -a "$version"
 done
 plymouth-set-default-theme pkos || echo 'Plymouth theme unavailable; text boot remains usable.'

@@ -15,7 +15,7 @@ for root in ('binary/boot/grub','binary/isolinux'):
             if m:
                 safe=m.group(0)
                 safe=re.sub(r'menuentry[^\n]*\{', 'menuentry "Try pkOS — Intel graphics fallback" {',safe,count=1)
-                safe=safe.replace('nvidia-drm.modeset=1','module_blacklist=nvidia,nvidia_drm,nvidia_modeset,nvidia_uvm nouveau.modeset=0')
+                safe=safe.replace('nvidia-drm.modeset=1','module_blacklist=nvidia,nvidia_drm,nvidia_modeset,nvidia_uvm,nvidia_current,nvidia_current_drm,nvidia_current_modeset,nvidia_current_uvm nouveau.modeset=0')
                 safe=safe.replace('quiet splash','')
                 text+='\n'+safe+'\n'
         p.write_text(text)

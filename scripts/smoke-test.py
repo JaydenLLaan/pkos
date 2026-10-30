@@ -73,7 +73,7 @@ try:
     command('for n in $(seq 1 90); do pgrep -x plasmashell >/dev/null && break; sleep 2; done; pgrep -a plasmashell; pgrep -a kwin_wayland', 240)
     command('loginctl list-sessions; loginctl show-session $(loginctl list-sessions --no-legend | awk \'$3=="pkos" && $4=="seat0" {print $1; exit}\') -p Type | grep Wayland -i')
     command('test -x /usr/local/bin/pk-gpu && test -x /usr/local/bin/pk-setup; uv --version; node --version; go version; nvim --version | head -1')
-    command('sudo modinfo nvidia | head -10; sudo dkms status; test -e /usr/share/wayland-sessions/plasma.desktop')
+    command('sudo modinfo nvidia-current | head -10; sudo dkms status; test -e /usr/share/wayland-sessions/plasma.desktop')
     command('grep -q "plugin=org.kde.plasma.icontasks" ~/.config/plasma-org.kde.plasma.desktop-appletsrc')
     screenshot()
     command('systemd-run --user --collect --unit=pkos-installer-test pk-install')
