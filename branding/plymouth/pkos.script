@@ -1,0 +1,22 @@
+Window.SetBackgroundTopColor(0.063, 0.082, 0.106);
+Window.SetBackgroundBottomColor(0.063, 0.082, 0.106);
+logo.image = Image("wordmark.png");
+logo.sprite = Sprite(logo.image);
+logo.sprite.SetX(Window.GetWidth() / 2 - logo.image.GetWidth() / 2);
+logo.sprite.SetY(Window.GetHeight() / 2 - logo.image.GetHeight() / 2);
+fun display_message(text) {
+    message.image = Image.Text(text, 0.86, 0.89, 0.93);
+    message.sprite = Sprite(message.image);
+    message.sprite.SetX(Window.GetWidth() / 2 - message.image.GetWidth() / 2);
+    message.sprite.SetY(Window.GetHeight() / 2 + 90);
+}
+Plymouth.SetDisplayMessageFunction(display_message);
+fun display_password(prompt, bullets) {
+    text = prompt;
+    for (i = 0; i < bullets; i++) text += " *";
+    display_message(text);
+}
+Plymouth.SetDisplayPasswordFunction(display_password);
+fun display_normal() { display_message(""); }
+Plymouth.SetDisplayNormalFunction(display_normal);
+

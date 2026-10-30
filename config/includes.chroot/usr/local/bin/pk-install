@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+exec pkexec /usr/local/sbin/pk-installer-root
+

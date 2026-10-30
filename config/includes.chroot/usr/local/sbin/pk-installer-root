@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+if ! grep -qw 'boot=live' /proc/cmdline; then
+  echo 'Install pkOS is only available in the live session.' >&2
+  exit 1
+fi
+if [ ! -d /sys/firmware/efi ]; then
+  echo 'Boot the USB in UEFI mode before installing pkOS.' >&2
+  exit 1
+fi
+export QT_QPA_PLATFORM=xcb
+exec /usr/bin/calamares
+

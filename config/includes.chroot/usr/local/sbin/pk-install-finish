@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+test "${1:-}" = --calamares-target
+# Persist EFI fallback updates alongside the named pkOS EFI entry.
+echo 'grub-efi-amd64 grub2/force_efi_extra_removable boolean true' | debconf-set-selections
+# Debconf and GRUB use this distributor for subsequent package upgrades.
+echo 'grub-efi-amd64 grub2/update_nvram boolean true' | debconf-set-selections
+# Swapfile is created by Calamares. Root is ext4, including when inside LUKS.
+if ! swapon --show=NAME --noheadings | grep -qx /swapfile && [ ! -f /swapfile ]; then
+  fallocate -l 4G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+systemctl enable sddm.service
+update-grub
+install -d /var/lib/pkos
+date -u +%FT%TZ > /var/lib/pkos/installed
+apt-get clean
+

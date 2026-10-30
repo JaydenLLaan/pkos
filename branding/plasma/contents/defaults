@@ -1,0 +1,11 @@
+[kdeglobals][General]
+ColorScheme=pkOS
+[kdeglobals][Icons]
+Theme=breeze-dark
+[kcminputrc][Mouse]
+cursorTheme=breeze_cursors
+[plasmarc][Theme]
+name=breeze-dark
+[Wallpaper]
+Image=pkos-slate
+

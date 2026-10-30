@@ -1,0 +1,22 @@
+#!/bin/sh
+set -eu
+lb config noauto \
+  --mode debian --distribution trixie --architectures amd64 \
+  --archive-areas 'main contrib non-free non-free-firmware' \
+  --binary-images iso-hybrid --bootloaders 'syslinux grub-efi' \
+  --debian-installer none --apt-recommends false \
+  --apt-indices false --memtest none --win32-loader false \
+  --firmware-chroot false --firmware-binary false \
+  --linux-packages 'linux-image linux-headers' --linux-flavours amd64 \
+  --security true --updates true --backports false \
+  --mirror-bootstrap https://deb.debian.org/debian \
+  --mirror-chroot https://deb.debian.org/debian \
+  --mirror-binary https://deb.debian.org/debian \
+  --mirror-chroot-security https://security.debian.org/debian-security \
+  --mirror-binary-security https://security.debian.org/debian-security \
+  --chroot-squashfs-compression-type xz --chroot-squashfs-compression-level 6 \
+  --iso-application pkOS --iso-publisher pkOS --iso-preparer pkOS \
+  --iso-volume PKOS_LIVE --image-name pkos \
+  --bootappend-live 'boot=live components username=pkos hostname=pkos locales=en_GB.UTF-8 keyboard-layouts=gb timezone=Europe/London nvidia-drm.modeset=1 console=tty0 console=ttyS0,115200 quiet splash' \
+  "${@}"
+

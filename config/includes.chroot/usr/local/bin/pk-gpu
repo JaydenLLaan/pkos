@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+if [ "$#" -eq 0 ]; then
+  echo 'Usage: pk-gpu PROGRAM [ARGUMENTS…]' >&2
+  exit 2
+fi
+if ! nvidia-smi -L >/dev/null 2>&1; then
+  echo 'NVIDIA is unavailable. Use the application normally on Intel, or inspect nvidia-smi and journalctl -k.' >&2
+  exit 1
+fi
+export __NV_PRIME_RENDER_OFFLOAD=1
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export __VK_LAYER_NV_optimus=NVIDIA_only
+exec "$@"
+

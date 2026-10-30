@@ -1,0 +1,12 @@
+{
+  "KPlugin": {
+    "Id": "org.pkos.desktop",
+    "Name": "pkOS",
+    "Description": "A quiet place to build",
+    "Version": "1.0",
+    "License": "MIT",
+    "Authors": [{"Name": "pkOS"}]
+  },
+  "KPackageStructure": "Plasma/LookAndFeel"
+}
+

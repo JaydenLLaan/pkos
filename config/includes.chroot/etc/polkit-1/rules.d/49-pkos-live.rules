@@ -1,0 +1,8 @@
+// The installer has a live-session check; no privilege grant on installed boots.
+polkit.addRule(function(action, subject) {
+    if (action.id === "org.pkos.install" && subject.user === "pkos" && subject.active && subject.local) {
+        var cmdline = polkit.spawn(["/usr/bin/cat", "/proc/cmdline"]);
+        if (cmdline.indexOf("boot=live") >= 0) return polkit.Result.YES;
+    }
+});
+

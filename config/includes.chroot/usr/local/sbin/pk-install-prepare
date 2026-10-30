@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+test "${1:-}" = --calamares-target
+# This helper is called by Calamares INSIDE the new target root.
+export DEBIAN_FRONTEND=noninteractive
+apt-get purge -y --no-auto-remove \
+  live-boot live-boot-initramfs-tools live-config live-config-systemd live-tools user-setup calamares
+rm -f /etc/sddm.conf /etc/sddm.conf.d/live*.conf /etc/sudoers.d/live \
+  /etc/sudoers.d/90-live /etc/polkit-1/rules.d/49-pkos-live.rules
+rm -f /etc/skel/Desktop/install-pkos.desktop /usr/share/applications/install-pkos.desktop
+# Live user's home is normally created only in the live overlay.
+if id pkos >/dev/null 2>&1; then userdel -r pkos; fi
+install -d -m700 /etc/initramfs-tools/conf.d
+echo UMASK=0077 > /etc/initramfs-tools/conf.d/pkos-permissions
+systemctl enable NetworkManager.service bluetooth.service sddm.service fstrim.timer
+systemctl set-default graphical.target
+truncate -s 0 /etc/machine-id
+rm -f /var/lib/dbus/machine-id
+ln -s /etc/machine-id /var/lib/dbus/machine-id
+

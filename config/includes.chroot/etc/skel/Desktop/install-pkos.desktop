@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Install pkOS
+Comment=Erase the selected disk and install pkOS
+Exec=pk-install
+Icon=pkos
+Terminal=false
+

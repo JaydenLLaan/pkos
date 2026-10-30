@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euo pipefail
+sed -i 's/^# *en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+update-locale LANG=en_GB.UTF-8
+ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+echo Europe/London > /etc/timezone
+echo pkos > /etc/hostname
+cat > /etc/default/keyboard <<'EOF'
+XKBMODEL="pc105"
+XKBLAYOUT="gb"
+XKBVARIANT=""
+XKBOPTIONS=""
+BACKSPACE="guess"
+EOF
+systemctl enable NetworkManager.service bluetooth.service sddm.service fstrim.timer
+systemctl set-default graphical.target
+systemctl disable NetworkManager-wait-online.service || true
+ln -sf /lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
+echo /usr/bin/sddm > /etc/X11/default-display-manager
+# Build for the image kernel, never the Ubuntu host kernel.
+for kernel in /lib/modules/*; do
+  version=${kernel##*/}
+  dkms autoinstall -k "$version"
+  modinfo -k "$version" nvidia >/dev/null
+  depmod -a "$version"
+done
+plymouth-set-default-theme pkos || echo 'Plymouth theme unavailable; text boot remains usable.'
+update-initramfs -u -k all
+fc-cache -f
+update-desktop-database /usr/share/applications || true
+

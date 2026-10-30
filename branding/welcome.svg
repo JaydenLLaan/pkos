@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440">
+  <rect width="900" height="440" fill="#10151b"/>
+  <text x="50" y="100" font-family="Inter,sans-serif" font-size="48" fill="#edf2f7">Welcome to pkOS.</text>
+  <text x="50" y="154" font-family="Inter,sans-serif" font-size="22" fill="#9baab9">A quiet place to build.</text>
+  <path d="M50 207h800" stroke="#334858"/>
+  <g font-family="Inter,sans-serif" font-size="21" fill="#d8b99a">
+    <text x="50" y="267">Erase disk removes everything on the selected disk:</text>
+    <text x="50" y="305">Windows, recovery partitions and all personal files.</text>
+    <text x="50" y="355" fill="#edf2f7">Back up your files before continuing.</text>
+  </g>
+</svg>
+

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=About pkOS
+Comment=A quiet place to build
+Exec=pk-welcome
+Icon=pkos
+Terminal=false
+Categories=System;
+

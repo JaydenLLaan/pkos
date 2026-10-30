@@ -1,0 +1,66 @@
+#!/bin/bash
+set -uo pipefail
+if [ "${EUID}" -eq 0 ]; then
+  echo 'Run pk-setup as your normal user; it asks for sudo only when needed.'
+  exit 1
+fi
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+state="$HOME/.local/state/pkos"
+mkdir -p "$state" "$HOME/.local/bin"
+exec > >(tee -a "$state/setup.log") 2>&1
+failures=0
+temporary=$(mktemp -d)
+trap 'rm -r -- "$temporary"' EXIT
+ask() { local reply; read -r -p "$1 [y/N] " reply; [[ "$reply" =~ ^[Yy]([Ee][Ss])?$ ]]; }
+step() {
+  local title=$1; shift
+  printf '\n→ %s\n' "$title"
+  if "$@"; then echo '  Ready.'; else echo '  Could not complete. Re-run pk-setup to retry.'; failures=$((failures+1)); fi
+}
+printf '\npkOS setup\nYour workspace, your choices. You can run this again any time.\n'
+if ! curl -fsSI --connect-timeout 10 --max-time 30 https://registry.npmjs.org/ >/dev/null; then
+  echo 'No working internet connection. Connect with the network icon, then run pk-setup again.'
+  exit 1
+fi
+if ! command -v claude >/dev/null; then step 'Installing Claude Code' npm install -g --prefix "$HOME/.local" @anthropic-ai/claude-code; fi
+if ! command -v codex >/dev/null; then step 'Installing Codex CLI' npm install -g --prefix "$HOME/.local" @openai/codex; fi
+install_rust() {
+  curl -fL --retry 2 --max-time 120 https://sh.rustup.rs -o "$temporary/rustup.sh" &&
+    sh "$temporary/rustup.sh" -y --profile minimal --no-modify-path
+}
+if ! command -v rustup >/dev/null; then step 'Installing Rust (minimal stable toolchain)' install_rust; fi
+install_ollama() {
+  curl -fL --retry 2 --max-time 120 https://ollama.com/install.sh -o "$temporary/ollama.sh" &&
+    sudo sh "$temporary/ollama.sh"
+}
+if ! command -v ollama >/dev/null; then step 'Installing Ollama' install_ollama; fi
+if command -v ollama >/dev/null; then step 'Starting Ollama' sudo systemctl enable --now ollama; fi
+if ! dpkg-query -W -f='${Status}' nvidia-cuda-toolkit 2>/dev/null | grep -q 'install ok installed'; then
+  if ask 'Install the optional CUDA development toolkit? (Several GB; Ollama does not require it.)'; then
+    step 'Refreshing packages' sudo apt-get update
+    step 'Installing CUDA development tools' sudo apt-get install -y nvidia-cuda-toolkit
+  fi
+fi
+if command -v ollama >/dev/null && ! ollama list 2>/dev/null | grep -q '^qwen2.5-coder:1.5b'; then
+  if ask 'Download Qwen 2.5 Coder 1.5B for local coding? (~1 GB)'; then
+    step 'Pulling your local model' ollama pull qwen2.5-coder:1.5b
+  fi
+fi
+if ! git config --global user.name >/dev/null; then
+  read -r -p 'Git name (Enter to skip): ' git_name
+  [ -z "$git_name" ] || git config --global user.name "$git_name"
+fi
+if ! git config --global user.email >/dev/null; then
+  read -r -p 'Git email (Enter to skip): ' git_email
+  [ -z "$git_email" ] || git config --global user.email "$git_email"
+fi
+printf '\nLaunch claude or codex to sign in. Open a new terminal to refresh your PATH.\n'
+if [ "$failures" -eq 0 ]; then
+  touch "$state/setup-complete"
+  echo 'All selected steps completed.'
+else
+  echo "$failures step(s) need a retry. Log: $state/setup.log"
+fi
+read -r -p 'Press Enter to close. ' _
+exit "$((failures > 0))"
+

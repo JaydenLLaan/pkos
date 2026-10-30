@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euo pipefail
+# Apply late: base-files and package hooks must see the original base identity.
+rm -f /etc/os-release
+cat > /usr/lib/os-release <<'EOF'
+NAME="pkOS"
+ID=pkos
+ID_LIKE=debian
+PRETTY_NAME="pkOS"
+VERSION="1.0"
+VERSION_ID="1.0"
+VERSION_CODENAME=trixie
+HOME_URL="https://github.com/JaydenLLaan/pkos"
+LOGO=pkos
+EOF
+ln -s ../usr/lib/os-release /etc/os-release
+printf 'pkOS 1.0 \\n \\l\n' > /etc/issue
+printf 'pkOS 1.0\n' > /etc/issue.net
+printf '\npkOS — a quiet place to build.\nRun pk-setup to configure your development environment.\n\n' > /etc/motd
+# Keep package licensing/copyright and APT origin metadata intact.
+install -d /usr/share/pkos
+dpkg-query -W -f='${Package}\t${Version}\n' > /usr/share/pkos/package-manifest.txt
+python3 - <<'PY'
+import json, platform, subprocess
+from pathlib import Path
+versions={p:subprocess.check_output(['dpkg-query','-W','-f=${Version}',p],text=True) for p in ['linux-image-amd64','plasma-desktop','nvidia-driver','calamares']}
+Path('/usr/share/pkos/build-info.json').write_text(json.dumps({'name':'pkOS','version':'1.0','architecture':'amd64','packages':versions},indent=2)+'\n')
+PY
+# No machine identity or generated host keys in a redistributable live image.
+truncate -s 0 /etc/machine-id
+rm -f /var/lib/dbus/machine-id /etc/ssh/ssh_host_*
+apt-get clean
+rm -f /tmp/vscodium.asc
+

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install pkOS
+Comment=Replace the selected disk, including Windows, with pkOS
+Exec=pk-install
+Icon=pkos
+Terminal=false
+Categories=System;
+

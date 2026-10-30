@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome to pkOS
+Exec=pk-welcome --autostart
+Icon=pkos
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+

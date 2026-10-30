@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+export DEBIAN_FRONTEND=noninteractive
+# Optional editor repository: signed, bounded requests, Kate always available.
+if curl --fail --location --retry 2 --max-time 45 \
+  https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg -o /tmp/vscodium.asc \
+  && gpg --batch --yes --dearmor -o /usr/share/keyrings/vscodium-archive-keyring.gpg /tmp/vscodium.asc; then
+  cat > /etc/apt/sources.list.d/vscodium.sources <<'EOF'
+Types: deb
+URIs: https://download.vscodium.com/debs
+Suites: vscodium
+Components: main
+Architectures: amd64
+Signed-By: /usr/share/keyrings/vscodium-archive-keyring.gpg
+EOF
+  if ! apt-get -o Acquire::Retries=2 -o Acquire::https::Timeout=40 update \
+    || ! apt-get install -y --no-install-recommends codium; then
+    echo 'VSCodium repository unavailable; Kate is the installed editor.'
+    rm -f /etc/apt/sources.list.d/vscodium.sources
+  fi
+fi
+# uv is isolated from the system Python and available to every user.
+python3 -m venv /opt/pkos/uv
+/opt/pkos/uv/bin/pip install --no-cache-dir uv
+ln -sf /opt/pkos/uv/bin/uv /usr/local/bin/uv
+ln -sf /opt/pkos/uv/bin/uvx /usr/local/bin/uvx
+

@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=pkOS
+Description=A quiet place to build
+ModuleName=script
+[script]
+ImageDir=/usr/share/plymouth/themes/pkos
+ScriptFile=/usr/share/plymouth/themes/pkos/pkos.script
+

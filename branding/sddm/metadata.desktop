@@ -1,0 +1,11 @@
+[SddmGreeterTheme]
+Name=pkOS
+Description=pkOS login
+Author=pkOS
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+Theme-Id=pkos
+Theme-API=2.0
+

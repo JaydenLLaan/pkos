@@ -1,0 +1,67 @@
+name: Build pkOS
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pkos-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  iso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free runner space
+        shell: bash
+        run: |
+          # Only disposable, preinstalled SDKs on this ephemeral GitHub runner.
+          sudo python3 - <<'PY'
+          import shutil
+          for path in ('/usr/local/lib/android', '/opt/ghc', '/usr/share/dotnet', '/opt/hostedtoolcache/CodeQL'):
+              shutil.rmtree(path, ignore_errors=True)
+          PY
+          docker image prune -af
+          df -h .
+      - name: Build in privileged Debian 13 amd64 container
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p dist test-results
+          docker run --name pkos-builder --privileged --platform linux/amd64 \
+            -v "$PWD:/work" -w /work debian:trixie \
+            bash scripts/build.sh 2>&1 | tee dist/build.log
+      - name: Install VM test tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils ovmf python3-pexpect python3-pil
+          sudo chmod a+rw /dev/kvm || true
+      - name: Verify ISO and UEFI live boot
+        timeout-minutes: 25
+        run: sudo python3 scripts/smoke-test.py dist/pkos.iso
+      - name: Upload boot and build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkos-diagnostics
+          path: |
+            dist/*.log
+            dist/*.txt
+            dist/*.json
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload verified ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkos-iso
+          path: |
+            dist/pkos.iso
+            dist/pkos.iso.sha256
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30
+

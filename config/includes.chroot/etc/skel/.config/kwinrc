@@ -1,0 +1,11 @@
+[org.kde.kdecoration2]
+library=org.kde.breeze
+theme=Breeze
+BorderSize=None
+[Desktops]
+Number=1
+[Plugins]
+blurEnabled=true
+contrastEnabled=true
+wobblywindowsEnabled=false
+

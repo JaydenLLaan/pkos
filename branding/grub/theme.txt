@@ -1,0 +1,24 @@
+title-text: "pkOS"
+title-color: "#edf2f7"
+desktop-color: "#10151b"
+terminal-font: "Unifont Regular 16"
++ boot_menu {
+  left = 12%
+  top = 38%
+  width = 76%
+  height = 40%
+  item_color = "#9baab9"
+  selected_item_color = "#edf2f7"
+  item_height = 36
+  item_padding = 12
+  item_spacing = 8
+}
++ label {
+  left = 12%
+  top = 82%
+  width = 76%
+  height = 30
+  text = "A quiet place to build."
+  color = "#8babc0"
+}
+

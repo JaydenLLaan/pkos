@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+python3 - <<'PY'
+from pathlib import Path
+import re
+for root in ('binary/boot/grub','binary/isolinux'):
+    if not Path(root).exists():
+        continue
+    for p in Path(root).rglob('*.cfg'):
+        text=p.read_text()
+        text=text.replace('Debian GNU/Linux','pkOS').replace('Debian','pkOS').replace('Live system','Try pkOS')
+        if p.name=='grub.cfg':
+            text='set timeout=5\nset menu_color_normal=light-gray/black\nset menu_color_highlight=white/dark-gray\n'+text
+            m=re.search(r'menuentry[^\n]*\{.*?\n\}',text,re.S)
+            if m:
+                safe=m.group(0)
+                safe=re.sub(r'menuentry[^\n]*\{', 'menuentry "Try pkOS — Intel graphics fallback" {',safe,count=1)
+                safe=safe.replace('nvidia-drm.modeset=1','module_blacklist=nvidia,nvidia_drm,nvidia_modeset,nvidia_uvm nouveau.modeset=0')
+                safe=safe.replace('quiet splash','')
+                text+='\n'+safe+'\n'
+        p.write_text(text)
+PY
+
