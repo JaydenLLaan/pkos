@@ -18,6 +18,7 @@ cp -a calamares/. .build/config/includes.chroot/etc/calamares/
 python3 scripts/assets.py .build/config/includes.chroot
 install -D -m644 README.md .build/config/includes.chroot/usr/share/doc/pkos/README.md
 install -D -m644 TESTING.md .build/config/includes.chroot/usr/share/doc/pkos/TESTING.md
+install -D -m644 LICENSE .build/config/includes.chroot/usr/share/doc/pkos/copyright
 chmod +x .build/auto/config .build/config/hooks/live/*.hook.chroot
 find .build/config/includes.chroot/usr/local/bin .build/config/includes.chroot/usr/local/sbin -type f -exec chmod 755 {} +
 chmod 755 .build/config/includes.chroot/etc/skel/Desktop/*.desktop

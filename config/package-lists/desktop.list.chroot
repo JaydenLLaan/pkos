@@ -19,6 +19,7 @@ wireplumber
 rtkit
 xdg-desktop-portal-kde
 xdg-utils
+desktop-file-utils
 polkit-kde-agent-1
 pkexec
 dolphin
