@@ -26,17 +26,23 @@ def frame(prefix, x=0, y=0, radius=12, color=SURFACE, opacity=1, border=BORDER, 
             if name=='bottom':
                 detail=f'<circle cx="32" cy="{r/2}" r="2" fill="{ACCENT}"/>'
         elif border:
-            if name=='top': detail=f'<path d="M0 .5H64" stroke="{border}"/>'
-            if name=='bottom': detail=f'<path d="M0 {r-.5}H64" stroke="{border}"/>'
-            if name=='left': detail=f'<path d="M.5 0V64" stroke="{border}"/>'
-            if name=='right': detail=f'<path d="M{r-.5} 0V64" stroke="{border}"/>'
+            if name=='top': detail=f'<rect width="64" height="1" fill="{border}"/>'
+            if name=='bottom': detail=f'<rect y="{r-1}" width="64" height="1" fill="{border}"/>'
+            if name=='left': detail=f'<rect width="1" height="64" fill="{border}"/>'
+            if name=='right': detail=f'<rect x="{r-1}" width="1" height="64" fill="{border}"/>'
         pieces.append(f'<g id="{stem}{name}" transform="translate({x+dx} {y+dy})"><rect width="{width}" height="{height}" fill="{fill}" fill-opacity="{alpha}"/>{detail}</g>')
     for name,dx,dy,rotation in [('topleft',0,0,0),('topright',r+64,0,90),('bottomright',r+64,r+64,180),('bottomleft',0,r+64,270)]:
         # Corner paths have exact r x r bounds. Rotate around their centres.
         shape=f'M0 {r} A{r} {r} 0 0 1 {r} 0 V{r} Z'
         alpha=0 if dot else opacity
-        outline='' if dot or not border else f'<path d="M.5 {r} A{r-.5} {r-.5} 0 0 1 {r} .5" fill="none" stroke="{border}"/>'
-        pieces.append(f'<g id="{stem}{name}" transform="translate({x+dx} {y+dy})"><g transform="rotate({rotation} {r/2} {r/2})"><path d="{shape}" fill="{color}" fill-opacity="{alpha}"/>{outline}</g></g>')
+        # Filled geometry avoids Qt SVG's conservative stroke bounds, which
+        # otherwise add seams when KSvg scales nine-slice corner elements.
+        if border and not dot and r>1:
+            inner=f'M1 {r} A{r-1} {r-1} 0 0 1 {r} 1 V{r} Z'
+            corner=f'<path d="{shape}" fill="{border}"/><path d="{inner}" fill="{color}"/>'
+        else:
+            corner=f'<path d="{shape}" fill="{color}"/>'
+        pieces.append(f'<g id="{stem}{name}" transform="translate({x+dx} {y+dy})"><g opacity="{alpha}" transform="rotate({rotation} {r/2} {r/2})">{corner}</g></g>')
     for side in ['top','bottom','left','right']:
         pieces.append(f'<rect id="{stem}hint-{side}-margin" x="{x+100}" y="{y+100}" width="{margins}" height="{margins}" fill="#000"/>')
     # Stretch the strips once; tiling them exposes raster seams every 64px.

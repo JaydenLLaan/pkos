@@ -5,6 +5,6 @@
   </defs>
   <path fill="url(#glow)" d="M0 0h3840v2160H0z"/>
   <path d="M-300 1700C1300 1800 2000 900 4140 1000" stroke="url(#line)" stroke-width="2" fill="none"/>
-  <text x="240" y="240" fill="#8babc0" opacity=".24" font-family="Inter,sans-serif" font-weight="300" font-size="44" letter-spacing="2">pkOS</text>
+  <text x="480" y="240" fill="#8babc0" opacity=".24" font-family="Inter,sans-serif" font-weight="300" font-size="44" letter-spacing="2">pkOS</text>
 </svg>
 
