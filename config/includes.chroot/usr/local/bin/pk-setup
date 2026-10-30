@@ -7,6 +7,8 @@ fi
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 state="$HOME/.local/state/pkos"
 mkdir -p "$state" "$HOME/.local/bin"
+exec 9>"$state/setup.lock"
+if ! flock -n 9; then echo 'pkOS setup is already running in another terminal.'; exit 1; fi
 exec > >(tee -a "$state/setup.log") 2>&1
 failures=0
 temporary=$(mktemp -d)
