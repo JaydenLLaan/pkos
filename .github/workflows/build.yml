@@ -9,11 +9,16 @@ on:
         description: 'Optional prior run ID: re-test its ISO without rebuilding (test-only source changes)'
         required: false
         type: string
+      live_workspace:
+        description: 'Diagnostic only: open workspace in live session, without installing'
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: pkos-${{ github.ref }}
+  group: pkos-${{ github.ref }}-${{ inputs.test_existing_run || 'build' }}
   cancel-in-progress: false
 jobs:
   iso:
@@ -62,6 +67,8 @@ jobs:
           sudo chmod a+rw /dev/kvm || true
       - name: Verify ISO and UEFI live boot
         timeout-minutes: 45
+        env:
+          PKOS_LIVE_WORKSPACE: ${{ inputs.live_workspace }}
         run: sudo python3 scripts/smoke-test.py dist/pkos.iso
       - name: Upload boot and build diagnostics
         if: always()

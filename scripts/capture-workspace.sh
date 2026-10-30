@@ -33,7 +33,8 @@ systemd-run --user --collect --unit=pkos-shot-terminal \
     kitty -o linux_display_server=x11 --class pkos-terminal --title Workspace \
     bash -c 'cd "$HOME/Projects/workspace"; clear; python3 main.py; printf "\n"; git status --short; printf "\n"; exec bash'
 systemd-run --user --collect --unit=pkos-shot-editor \
-    codium --new-window --disable-gpu --ozone-platform=x11 --disable-workspace-trust \
+    env ELECTRON_ENABLE_LOGGING=1 codium --verbose --enable-logging=stderr \
+    --new-window --disable-gpu --ozone-platform=x11 --disable-workspace-trust \
     --skip-welcome --skip-release-notes "$workspace/main.py"
 terminal_window=''
 editor_window=''

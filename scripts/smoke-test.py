@@ -69,6 +69,17 @@ def settle_desktop():
     command('for n in $(seq 1 60); do pgrep -f "python3 /usr/share/pkos/welcome.py" >/dev/null && break; sleep 1; done; pgrep -af welcome.py; pkill -f "python3 /usr/share/pkos/welcome.py"; sleep 12',90)
     command('cat ~/.config/plasma-org.kde.plasma.desktop-appletsrc; ls -la ~/Desktop; busctl --user get-property org.kde.KWin /Effects org.kde.kwin.Effects loadedEffects')
 
+def capture_workspace():
+    command('sudo -n apt-get update >/tmp/pkos-shot-apt.log 2>&1 && sudo -n apt-get install -y --no-install-recommends xdotool >>/tmp/pkos-shot-apt.log 2>&1',240)
+    payload = base64.b64encode(zlib.compress(Path('scripts/capture-workspace.sh').read_bytes())).decode()
+    command("printf '%s' '"+payload+"' | base64 -d | python3 -c 'import sys,zlib; sys.stdout.buffer.write(zlib.decompress(sys.stdin.buffer.read()))' >/tmp/pkos-capture-workspace.sh")
+    command('id; ls -l /usr/share/codium/chrome-sandbox; unshare -Ur true; sysctl kernel.unprivileged_userns_clone kernel.apparmor_restrict_unprivileged_userns; true')
+    try:
+        command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") bash /tmp/pkos-capture-workspace.sh',180)
+    finally:
+        screenshot('installed-workspace' if os.environ.get('PKOS_LIVE_WORKSPACE')!='true' else 'live-workspace')
+        command('journalctl --user -u pkos-shot-terminal -u pkos-shot-editor --no-pager | tail -120; find ~/.config/VSCodium/logs -name main.log -exec tail -80 {} \\; 2>/dev/null; true')
+
 try:
     vm.expect(r'pkos login:')
     vm.sendline('pkos')
@@ -92,6 +103,10 @@ try:
     settle_desktop()
     command('ls /usr/share/applications/*cod*; grep -H "^Icon=" /usr/share/applications/*cod*; cat ~/.config/kxkbrc 2>/dev/null; cat /etc/default/keyboard; true')
     screenshot()
+    if os.environ.get('PKOS_LIVE_WORKSPACE') == 'true':
+        capture_workspace()
+        print('PASS: diagnostic live workspace only (installation was not run).',flush=True)
+        sys.exit(0)
     # Autologin does not render the greeter; preview its QML without logging out.
     command('systemd-run --user --collect --unit=pkos-greeter-test env QT_QPA_PLATFORM=xcb sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/pkos')
     command('sleep 5; pgrep -af "sddm-greeter-qt6 --test-mode" && journalctl --user -u pkos-greeter-test --no-pager | tail -30', 60)
@@ -153,14 +168,7 @@ try:
     command('test "$(grep -c "^plugin=org.kde.panel$" ~/.config/plasma-org.kde.plasma.desktop-appletsrc)" -eq 2 && test -z "$(find ~/Desktop -maxdepth 1 -type f ! -name .directory -print -quit)"')
     command('busctl --user get-property org.kde.KWin /Effects org.kde.kwin.Effects loadedEffects | grep kwin4_effect_shapecorners')
     # Position these two applications only in the disposable screenshot guest.
-    command('sudo -n apt-get update >/tmp/pkos-shot-apt.log 2>&1 && sudo -n apt-get install -y --no-install-recommends xdotool >>/tmp/pkos-shot-apt.log 2>&1',240)
-    payload = base64.b64encode(zlib.compress(Path('scripts/capture-workspace.sh').read_bytes())).decode()
-    command("printf '%s' '"+payload+"' | base64 -d | python3 -c 'import sys,zlib; sys.stdout.buffer.write(zlib.decompress(sys.stdin.buffer.read()))' >/tmp/pkos-capture-workspace.sh")
-    try:
-        command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") bash /tmp/pkos-capture-workspace.sh',180)
-    finally:
-        screenshot('installed-workspace')
-        command('journalctl --user -u pkos-shot-terminal -u pkos-shot-editor --no-pager | tail -80')
+    capture_workspace()
     (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True,'calamaresInstall':True,'installedDesktop':'Plasma Wayland','sudoUser':True,'twoPanelLayout':True,'installedWorkspaceScreenshot':True},indent=2)+'\n')
     print('PASS: actual ISO live UEFI boot, Calamares erase-disk install, installed UEFI boot and Plasma Wayland verified.',flush=True)
 finally:
