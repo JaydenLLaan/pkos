@@ -32,7 +32,7 @@ printf '\n# Next: make something useful.\n' >> main.py
 systemd-run --user --collect --unit=pkos-shot-terminal \
     kitty -o linux_display_server=x11 --class pkos-terminal --title Workspace \
     bash -c 'cd "$HOME/Projects/workspace"; clear; python3 main.py; printf "\n"; git status --short; printf "\n"; exec bash'
-systemd-run --user --collect --unit=pkos-shot-editor \
+systemd-run --user --collect --property=ExitType=cgroup --unit=pkos-shot-editor \
     env ELECTRON_ENABLE_LOGGING=1 codium --verbose --enable-logging=stderr \
     --new-window --disable-gpu --ozone-platform=x11 --disable-workspace-trust \
     --skip-welcome --skip-release-notes "$workspace/main.py"
@@ -57,4 +57,15 @@ xdotool windowsize "$terminal_window" "$terminal_width" "$terminal_height"
 xdotool windowmove "$terminal_window" 24 136
 xdotool windowactivate --sync "$terminal_window"
 sleep 8
+# A fresh account may be asked to create its wallet. Cancel only this wizard
+# in the disposable VM; the installed system retains normal secure storage.
+for attempt in $(seq 1 4); do
+    wallet_window=$(xdotool search --onlyvisible --name '^KDE Wallet Service$' 2>/dev/null | head -1 || true)
+    if [ -z "$wallet_window" ]; then break; fi
+    xdotool windowactivate --sync "$wallet_window"
+    xdotool key Escape
+    sleep 2
+done
+xdotool windowactivate --sync "$terminal_window"
+sleep 3
 printf 'Workspace capture ready: Kitty %s, VSCodium %s\n' "$terminal_window" "$editor_window"

@@ -162,6 +162,10 @@ Design checks require two panels and the installed desktop to be empty. CI
 captures the live desktop, packaged login theme, installer, installed desktop
 and installed workspace with Kitty and VSCodium open. Screenshot-only sample
 files and window positioning are confined to the disposable test machine.
+The capture uses a 1920×1080 virtual display and XWayland application windows
+for deterministic positioning; the desktop session remains Wayland and shipped
+application display defaults are unchanged. A first-use wallet wizard is
+canceled only in the disposable screenshot guest.
 
 The build targets the named Trixie suite and its security/updates repositories.
 It is repeatable from a clean clone, but **not bit-for-bit reproducible**:

@@ -31,7 +31,8 @@ args = ['-machine','q35','-accel',accel,'-cpu','max','-smp','2','-m','4096',
         '-drive',f'file={disk},format=qcow2,if=virtio',
         '-device','qemu-xhci,id=xhci',
         '-drive',f'if=none,format=raw,readonly=on,id=liveusb,file={iso}',
-        '-device','usb-storage,bus=xhci.0,drive=liveusb,bootindex=1','-vga','virtio',
+        '-device','usb-storage,bus=xhci.0,drive=liveusb,bootindex=1',
+        '-vga','none','-device','virtio-vga,xres=1920,yres=1080',
         '-device','virtio-rng-pci','-netdev','user,id=net0','-device','virtio-net-pci,netdev=net0',
         '-display','none','-serial','stdio','-qmp',f'unix:{qmp_path},server=on,wait=off','-no-reboot']
 log = (out/'live-serial.log').open('w')
