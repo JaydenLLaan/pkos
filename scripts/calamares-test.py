@@ -68,9 +68,14 @@ print('User input count:',len(entries),flush=True)
 if len(entries)!=5:
     dump()
     raise RuntimeError('Expected five user fields (name, login, hostname, password, repeat)')
-for (_,_,node),value in zip(entries,['PKOS Test','pkostest','pkos','pkos-test-123','pkos-test-123']):
-    bounds=node.queryComponent().getExtents(pyatspi.DESKTOP_COORDS)
-    subprocess.run(['xdotool','mousemove','--sync',str(bounds.x+bounds.width//2),str(bounds.y+bounds.height//2),'click','1','key','ctrl+a'],check=True)
+# Focus the first field once, then follow Qt's tab order. Absolute AT-SPI
+# bounds can lag re-layouts after the auto-generated login/hostname changes.
+bounds=entries[0][2].queryComponent().getExtents(pyatspi.DESKTOP_COORDS)
+subprocess.run(['xdotool','mousemove','--sync',str(bounds.x+bounds.width//2),str(bounds.y+bounds.height//2),'click','1'],check=True)
+for index,value in enumerate(['PKOS Test','pkostest','pkos','pkos-test-123','pkos-test-123']):
+    if index:
+        subprocess.run(['xdotool','key','Tab'],check=True)
+    subprocess.run(['xdotool','key','ctrl+a'],check=True)
     subprocess.run(['xdotool','type','--clearmodifiers','--delay','40',value],check=True)
     time.sleep(.5)
 click('Next')
