@@ -1,5 +1,7 @@
 #!/bin/bash
 set -euo pipefail
+# live-build invokes binary hooks with binary/ as the current directory.
+cd ..
 python3 - <<'PY'
 from pathlib import Path
 import re
