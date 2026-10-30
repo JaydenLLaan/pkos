@@ -1,0 +1,13 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Id": "org.pkos.wordmark",
+    "Name": "pkOS Wordmark",
+    "Description": "Quiet desktop identity",
+    "Icon": "start-here",
+    "Version": "1.1",
+    "License": "MIT",
+    "Authors": [{"Name": "pkOS"}]
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

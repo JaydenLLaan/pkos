@@ -16,6 +16,7 @@ rsync -a --delete config/ .build/config/
 install -d .build/config/includes.chroot/etc/calamares
 cp -a calamares/. .build/config/includes.chroot/etc/calamares/
 python3 scripts/assets.py .build/config/includes.chroot
+bash scripts/build-corners.sh .build/config/includes.chroot
 install -D -m644 README.md .build/config/includes.chroot/usr/share/doc/pkos/README.md
 install -D -m644 TESTING.md .build/config/includes.chroot/usr/share/doc/pkos/TESTING.md
 install -D -m644 LICENSE .build/config/includes.chroot/usr/share/doc/pkos/copyright

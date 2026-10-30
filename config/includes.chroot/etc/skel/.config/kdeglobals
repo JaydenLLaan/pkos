@@ -7,11 +7,14 @@ menuFont=Inter,10,-1,5,50,0,0,0,0,0
 smallestReadableFont=Inter,9,-1,5,50,0,0,0,0,0
 toolBarFont=Inter,10,-1,5,50,0,0,0,0,0
 [Icons]
-Theme=breeze-dark
+Theme=Papirus-Dark
 [KDE]
 LookAndFeelPackage=org.pkos.desktop
 widgetStyle=Breeze
 SingleClick=false
+[General]
+TerminalApplication=kitty
+TerminalService=kitty.desktop
 [WM]
 activeFont=Inter,10,-1,5,50,0,0,0,0,0
 

@@ -1,0 +1,3 @@
+[org.kde.krunner.desktop]
+_k_friendly_name=KRunner
+_launch=Alt+Space\tAlt+F2\tMeta+Space,Alt+Space\tAlt+F2,Run Command

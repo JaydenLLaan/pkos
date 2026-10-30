@@ -81,6 +81,8 @@ try:
     command('grep -q "LayoutList=gb" ~/.config/kxkbrc')
     command('sudo modinfo nvidia-current | head -10; sudo dkms status; test -e /usr/share/wayland-sessions/plasma.desktop')
     command('grep -q "plugin=org.kde.plasma.icontasks" ~/.config/plasma-org.kde.plasma.desktop-appletsrc')
+    command('test "$(grep -c "^plugin=org.kde.panel$" ~/.config/plasma-org.kde.plasma.desktop-appletsrc)" -eq 2 && grep -q "plugin=org.pkos.wordmark" ~/.config/plasma-org.kde.plasma.desktop-appletsrc && ! grep -q "plugin=org.kde.plasma.appmenu" ~/.config/plasma-org.kde.plasma.desktop-appletsrc')
+    command('grep -q "Theme=Papirus-Dark" ~/.config/kdeglobals && grep -q "theme=__aurorae__svg__pkos" ~/.config/kwinrc; fc-match Inter; fc-match "JetBrains Mono"')
     screenshot('live-welcome')
     command('pkill -f /usr/share/pkos/welcome.py; sleep 5')
     command('ls /usr/share/applications/*cod*; grep -H "^Icon=" /usr/share/applications/*cod*; cat ~/.config/kxkbrc 2>/dev/null; cat /etc/default/keyboard; true')
@@ -143,7 +145,15 @@ try:
     screenshot('installed-welcome')
     command('pkill -f /usr/share/pkos/welcome.py; sleep 5')
     screenshot('installed-desktop')
-    (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True,'calamaresInstall':True,'installedDesktop':'Plasma Wayland','sudoUser':True},indent=2)+'\n')
+    command('test "$(grep -c "^plugin=org.kde.panel$" ~/.config/plasma-org.kde.plasma.desktop-appletsrc)" -eq 2 && test -z "$(find ~/Desktop -maxdepth 1 -type f -print -quit)"')
+    # Position these two applications only in the disposable screenshot guest.
+    command('sudo -n apt-get update >/tmp/pkos-shot-apt.log 2>&1 && sudo -n apt-get install -y --no-install-recommends xdotool >>/tmp/pkos-shot-apt.log 2>&1',240)
+    payload = base64.b64encode(zlib.compress(Path('scripts/capture-workspace.sh').read_bytes())).decode()
+    command("printf '%s' '"+payload+"' | base64 -d | python3 -c 'import sys,zlib; sys.stdout.buffer.write(zlib.decompress(sys.stdin.buffer.read()))' >/tmp/pkos-capture-workspace.sh")
+    command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") bash /tmp/pkos-capture-workspace.sh',180)
+    screenshot('installed-workspace')
+    command('qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects.loadedEffects || true')
+    (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True,'calamaresInstall':True,'installedDesktop':'Plasma Wayland','sudoUser':True,'twoPanelLayout':True,'installedWorkspaceScreenshot':True},indent=2)+'\n')
     print('PASS: actual ISO live UEFI boot, Calamares erase-disk install, installed UEFI boot and Plasma Wayland verified.',flush=True)
 finally:
     if vm.isalive():

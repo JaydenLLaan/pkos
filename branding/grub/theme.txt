@@ -7,10 +7,10 @@ terminal-font: "Unifont Regular 16"
   top = 38%
   width = 76%
   height = 40%
-  item_color = "#9baab9"
-  selected_item_color = "#edf2f7"
+  item_color = "#edf2f7"
+  selected_item_color = "#8babc0"
   item_height = 36
-  item_padding = 12
+  item_padding = 16
   item_spacing = 8
 }
 + label {

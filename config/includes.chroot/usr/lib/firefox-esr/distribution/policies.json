@@ -1,0 +1,9 @@
+{
+  "policies": {
+    "Preferences": {
+      "browser.tabs.inTitlebar": {"Value": 0, "Status": "default"},
+      "ui.systemUsesDarkTheme": {"Value": 1, "Status": "default"},
+      "widget.content.gtk-theme-override": {"Value": "pkOS", "Status": "default"}
+    }
+  }
+}

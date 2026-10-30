@@ -18,10 +18,10 @@ images:
   productIcon: logo.png
   productWelcome: welcome.png
 style:
-  SidebarBackground: '#11171e'
-  SidebarText: '#9baab9'
+  SidebarBackground: '#10151b'
+  SidebarText: '#8babc0'
   SidebarTextCurrent: '#edf2f7'
-  SidebarBackgroundCurrent: '#253443'
+  SidebarBackgroundCurrent: '#17212b'
 slideshow: show.qml
 slideshowAPI: 2
 

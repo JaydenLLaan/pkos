@@ -108,9 +108,20 @@ are baked into the ISO. Optional downloads can be large.
 
 Plasma 6, SDDM, Dolphin, Kate, Kitty, Konsole, Firefox ESR, NetworkManager,
 Bluetooth, PipeWire, power/brightness management, Inter and JetBrains Mono.
-The pkOS slate palette, logo, three wallpapers, 40px floating bottom panel,
-SDDM, GRUB and Plymouth themes are configured for new users through `/etc/skel`
-and system defaults. Breeze provides the underlying icon and cursor system.
+The pkOS slate palette uses `#10151b` backgrounds, `#17212b` surfaces,
+`#8babc0` accents and `#edf2f7` text. A 28px top bar holds the wordmark, tray
+and clock. A centred, floating dock fits its five pinned applications, stays
+visible and marks running apps with a dot. Alt+Space opens application search;
+there is no global menu. Window controls are on the left, with restrained
+coloured circles, 12px corners and thin borders. Installed desktops are empty;
+the live desktop has only the installer launcher.
+
+Qt, GTK, Firefox, VSCodium, Kitty, SDDM, Calamares, Plymouth and GRUB share the
+dark palette. Inter is the UI font and JetBrains Mono the code/terminal font.
+Papirus-Dark is the icon family, with grey folders; Breeze supplies the cursor.
+Kitty is the default terminal, with a compact Git-aware prompt and a muted
+dirty-worktree marker. Defaults are staged through `/etc/skel`, `/etc/xdg`,
+system configuration and live-build hooks, so they apply to fresh installations.
 
 Git, Neovim, tmux, Podman, Python, pipx, uv, Node/npm, Go, GCC, CMake, ripgrep,
 fd (`fdfind`), fzf, bat (`batcat`), jq, curl, htop and btop are installed.
@@ -146,6 +157,10 @@ CI also drives Calamares through an erase-disk installation on a disposable
 virtual disk, boots that disk with the ISO detached, and checks the installed
 desktop, sudo account, EFI loader and swap. The live boot uses a raw virtual USB
 device to exercise the hybrid image's USB boot path.
+Design checks require two panels and the installed desktop to be empty. CI
+captures the live desktop, packaged login theme, installer, installed desktop
+and installed workspace with Kitty and VSCodium open. Screenshot-only sample
+files and window positioning are confined to the disposable test machine.
 
 The build targets the named Trixie suite and its security/updates repositories.
 It is repeatable from a clean clone, but **not bit-for-bit reproducible**:
@@ -197,4 +212,23 @@ major suite changes.
 
 The base distribution's package metadata, repositories, copyright and license
 files are preserved. User-facing pkOS artwork and configuration are original.
+
+## Design licenses
+
+- Original pkOS SVG artwork, Aurorae decoration, Plasma style, wordmark widget,
+  GTK overrides and configuration: [MIT](LICENSE).
+- [Papirus icon theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme):
+  GPL-3.0; shipped by the distribution package with its copyright notices.
+- [Breeze](https://invent.kde.org/plasma/breeze) and
+  [Breeze GTK](https://invent.kde.org/plasma/breeze-gtk): KDE's open-licensed
+  widget engine and GTK base; their installed package copyright files retain
+  the component licenses. The pkOS decoration uses KDE's Aurorae engine.
+- [KDE Rounded Corners](https://github.com/matinlotfali/KDE-Rounded-Corners),
+  Rob and Matin Lotfaliei, GPL-3.0: v0.7.2, downloaded with a pinned SHA256 and
+  compiled against Trixie's KWin in CI. Only 12px clipping is enabled; extra
+  outlines and animation are disabled. Its license is installed under
+  `/usr/share/doc/pkos/third-party/`. Build dependencies stay out of the ISO.
+- [Inter](https://github.com/rsms/inter) and
+  [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono): SIL OFL-1.1.
+  No proprietary platform artwork or fonts are included.
 

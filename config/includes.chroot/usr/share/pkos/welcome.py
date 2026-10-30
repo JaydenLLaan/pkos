@@ -18,14 +18,14 @@ window = QWidget()
 window.setWindowTitle('pkOS')
 window.setFixedSize(580, 480)
 window.setStyleSheet('''
-QWidget { background:#10151b; color:#dce4ed; font:14px "Inter"; }
-QPushButton { background:#253443; border:1px solid #41586a; border-radius:8px; padding:14px; text-align:left; }
-QPushButton:hover { background:#334858; }
+QWidget { background:#17212b; color:#edf2f7; font:14px "Inter"; }
+QPushButton { background:#17212b; border:1px solid #33434f; border-radius:8px; padding:16px; text-align:left; }
+QPushButton:hover { background:#33434f; }
 QLabel { background:transparent; }
 ''')
 layout = QVBoxLayout(window)
 layout.setContentsMargins(40, 32, 40, 32)
-layout.setSpacing(18)
+layout.setSpacing(16)
 logo = QLabel('pkOS')
 logo.setStyleSheet('font-size:44px; font-weight:600; color:#edf2f7;')
 layout.addWidget(logo)
@@ -43,7 +43,7 @@ if live:
     layout.addWidget(install)
 else:
     setup = QPushButton('Prepare your workspace  →')
-    setup.clicked.connect(lambda: subprocess.Popen(['konsole', '-e', 'pk-setup']))
+    setup.clicked.connect(lambda: subprocess.Popen(['kitty', 'pk-setup']))
     layout.addWidget(setup)
 help_button = QPushButton('Read the guide')
 help_button.clicked.connect(lambda: subprocess.Popen(['kate', '/usr/share/doc/pkos/README.md']))

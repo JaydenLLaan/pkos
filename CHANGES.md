@@ -25,6 +25,19 @@
   the manual acceptance checklist in `TESTING.md`; no physical Acer testing
   was performed by CI.
 
+## Desktop restyle — 2026-10-30
+
+- Unified dark slate palette, Inter / JetBrains Mono and Papirus-Dark icons.
+- 28px top bar with wordmark, tray and clock; centred fit-content dock with
+  five pinned applications, running dots and no automatic hiding/global menu.
+- Original Aurorae decoration with left circle controls, thin borders and
+  12px corners; pinned, source-built GPL rounded-corner effect for client areas.
+- Matched Qt, GTK, Firefox, VSCodium, Kitty, SDDM, Calamares, GRUB and Plymouth.
+- Removed cropped wallpaper watermark in favour of a quiet top-left wordmark.
+- Expanded existing real-ISO boot/install checks with layout assertions and
+  an installed Kitty/VSCodium workspace capture. Hardware/software functions
+  and installer flow are retained.
+
 ## Future changes
 
 Append dated changes, affected files, build run and verification here.

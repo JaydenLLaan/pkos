@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import sys
 import json
+from design import deploy
 
 root = Path(sys.argv[1])
 source = Path('branding')
@@ -42,11 +43,12 @@ png(source/'logo.svg', 'etc/calamares/branding/pkos/logo.png', 128)
 png(source/'welcome.svg', 'etc/calamares/branding/pkos/welcome.png', 900)
 # Full scheme, including disabled/inactive groups, derived from one palette.
 scheme = '[General]\nName=pkOS\nColorScheme=pkOS\n\n'
-palette = {'View': '16,21,27', 'Window':'21,29,38', 'Button':'31,43,54', 'Selection':'82,111,132', 'Tooltip':'31,43,54', 'Complementary':'16,21,27', 'Header':'21,29,38'}
+palette = {'View': '16,21,27', 'Window':'23,33,43', 'Button':'23,33,43', 'Selection':'139,171,192', 'Tooltip':'23,33,43', 'Complementary':'16,21,27', 'Header':'23,33,43'}
 for group, bg in palette.items():
     for suffix in ['', '[Inactive]', '[Disabled]']:
-        scheme += f'[Colors:{group}]{suffix}\nBackgroundNormal={bg}\nBackgroundAlternate=25,34,44\nForegroundNormal=220,228,237\nForegroundInactive=139,155,171\nForegroundActive=139,171,192\nForegroundLink=139,171,192\nForegroundVisited=159,151,183\nForegroundNegative=216,151,151\nForegroundNeutral=216,185,154\nForegroundPositive=155,184,167\nDecorationFocus=139,171,192\nDecorationHover=111,142,164\n\n'
-scheme += '[WM]\nactiveBackground=21,29,38\nactiveForeground=237,242,247\ninactiveBackground=16,21,27\ninactiveForeground=139,155,171\n'
+        foreground='16,21,27' if group=='Selection' else '237,242,247'
+        scheme += f'[Colors:{group}]{suffix}\nBackgroundNormal={bg}\nBackgroundAlternate=23,33,43\nForegroundNormal={foreground}\nForegroundInactive=139,171,192\nForegroundActive=139,171,192\nForegroundLink=139,171,192\nForegroundVisited=139,171,192\nForegroundNegative=210,123,131\nForegroundNeutral=199,172,118\nForegroundPositive=140,174,152\nDecorationFocus=139,171,192\nDecorationHover=139,171,192\n\n'
+scheme += '[WM]\nactiveBackground=23,33,43\nactiveForeground=237,242,247\ninactiveBackground=23,33,43\ninactiveForeground=139,171,192\n'
 p=root/'usr/share/color-schemes/pkOS.colors'
 p.parent.mkdir(parents=True, exist_ok=True)
 p.write_text(scheme)
@@ -58,3 +60,4 @@ with globals_path.open('a') as stream:
 # Populate system-wide defaults too, while preserving user overrides.
 for name in ['kdeglobals', 'kwinrc', 'kcminputrc', 'ksplashrc', 'baloofilerc', 'kxkbrc', 'plasmarc']:
     copy(root/'etc/skel/.config'/name, 'etc/xdg/'+name)
+deploy(root)

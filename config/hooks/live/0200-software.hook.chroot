@@ -27,7 +27,7 @@ Type=Application
 Name=VSCodium
 GenericName=Code Editor
 Exec=codium %F
-Icon=accessories-text-editor
+Icon=vscodium
 Terminal=false
 StartupNotify=true
 StartupWMClass=VSCodium
@@ -39,6 +39,18 @@ else
   sed -i 's|applications:codium.desktop|applications:org.kde.kate.desktop|g' \
     /usr/share/plasma/look-and-feel/org.pkos.desktop/contents/layouts/org.kde.plasma.desktop-layout.js
 fi
+# Papirus' grey place icons keep the shell's single accent restrained.
+python3 - <<'PY'
+from pathlib import Path
+import os
+for path in Path('/usr/share/icons/Papirus').glob('*/places/*.svg'):
+    if path.is_symlink():
+        target=os.readlink(path)
+        grey=target.replace('-blue','-grey')
+        if grey != target and (path.parent/grey).exists():
+            path.unlink()
+            path.symlink_to(grey)
+PY
 # uv is isolated from the system Python and available to every user.
 python3 -m venv /opt/pkos/uv
 /opt/pkos/uv/bin/pip install --no-cache-dir uv

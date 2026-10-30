@@ -1,0 +1,11 @@
+{
+  "KPlugin": {
+    "Id": "pkos",
+    "Name": "pkOS Slate",
+    "Description": "Flat slate panels with restrained running indicators",
+    "Version": "1.1",
+    "License": "MIT",
+    "Authors": [{"Name": "pkOS"}]
+  },
+  "X-Plasma-API": "5.0"
+}

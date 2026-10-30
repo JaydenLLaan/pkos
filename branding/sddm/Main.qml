@@ -8,11 +8,11 @@ Pane {
     font.pixelSize: 14
     palette.window: "#10151b"
     palette.windowText: "#edf2f7"
-    palette.base: "#1f2b36"
+    palette.base: "#17212b"
     palette.text: "#edf2f7"
-    palette.button: "#253443"
+    palette.button: "#17212b"
     palette.buttonText: "#edf2f7"
-    palette.highlight: "#41586a"
+    palette.highlight: "#8babc0"
     palette.highlightedText: "#edf2f7"
     background: Rectangle {
         color: "#10151b"
@@ -23,51 +23,57 @@ Pane {
         fillMode: Image.PreserveAspectCrop
     }
     Rectangle {
-        width: 380
-        height: 430
-        radius: 16
-        color: "#111921"
+        width: 384
+        height: 432
+        radius: 12
+        color: "#17212b"
+        border.width: 1
+        border.color: "#33434f"
         anchors.centerIn: parent
         Column {
             anchors.centerIn: parent
-            spacing: 20
-            width: 300
+            spacing: 16
+            width: 320
             Image {
                 source: "wordmark.png"
-                width: 225
-                height: 68
+                width: 224
+                height: 72
                 fillMode: Image.PreserveAspectFit
             }
             TextField {
                 id: username
                 width: parent.width
                 placeholderText: "Username"
-                placeholderTextColor: "#9baab9"
+                placeholderTextColor: "#8babc0"
                 text: userModel.lastUser
                 font.family: "Inter"
                 font.pixelSize: 16
                 color: "#edf2f7"
                 background: Rectangle {
-                    color: "#1f2b36"
-                    radius: 6
+                    color: "#10151b"
+                    radius: 8
+                    border.color: "#33434f"
+                    border.width: 1
                 }
-                padding: 12
+                padding: 16
                 KeyNavigation.tab: password
             }
             TextField {
                 id: password
                 width: parent.width
                 placeholderText: "Password"
-                placeholderTextColor: "#9baab9"
+                placeholderTextColor: "#8babc0"
                 echoMode: TextInput.Password
                 focus: true
                 font.pixelSize: 16
                 color: "#edf2f7"
                 background: Rectangle {
-                    color: "#1f2b36"
-                    radius: 6
+                    color: "#10151b"
+                    radius: 8
+                    border.color: "#33434f"
+                    border.width: 1
                 }
-                padding: 12
+                padding: 16
                 onAccepted: sddm.login(username.text, password.text, session.currentIndex)
             }
             ComboBox {

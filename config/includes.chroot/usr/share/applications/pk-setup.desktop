@@ -2,7 +2,7 @@
 Type=Application
 Name=pkOS Setup
 Comment=Configure AI tools, Rust, Ollama and Git
-Exec=konsole -e pk-setup
+Exec=kitty pk-setup
 Icon=pkos
 Terminal=false
 Categories=Development;System;
