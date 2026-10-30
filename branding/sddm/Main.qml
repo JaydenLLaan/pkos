@@ -13,7 +13,25 @@ Pane {
     palette.button: "#17212b"
     palette.buttonText: "#edf2f7"
     palette.highlight: "#8babc0"
-    palette.highlightedText: "#edf2f7"
+    palette.highlightedText: "#10151b"
+    component PkButton: Button {
+        id: control
+        implicitWidth: Math.max(96, contentItem.implicitWidth + 32)
+        implicitHeight: 40
+        background: Rectangle {
+            radius: 8
+            color: control.down ? "#33434f" : "#17212b"
+            border.width: 1
+            border.color: control.activeFocus || control.hovered ? "#8babc0" : "#33434f"
+        }
+        contentItem: Text {
+            text: control.text
+            color: "#edf2f7"
+            font: control.font
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
     background: Rectangle {
         color: "#10151b"
     }
@@ -82,8 +100,15 @@ Pane {
                 model: sessionModel
                 textRole: "name"
                 currentIndex: sessionModel.lastIndex
+                implicitHeight: 40
+                background: Rectangle {
+                    radius: 8
+                    color: "#17212b"
+                    border.width: 1
+                    border.color: session.activeFocus ? "#8babc0" : "#33434f"
+                }
             }
-            Button {
+            PkButton {
                 width: parent.width
                 text: "Sign in"
                 onClicked: sddm.login(username.text, password.text, session.currentIndex)
@@ -101,11 +126,11 @@ Pane {
         anchors.right: parent.right
         anchors.margins: 32
         spacing: 16
-        Button {
+        PkButton {
             text: "Restart"
             onClicked: sddm.reboot()
         }
-        Button {
+        PkButton {
             text: "Power off"
             onClicked: sddm.powerOff()
         }
