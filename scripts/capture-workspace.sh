@@ -57,15 +57,19 @@ xdotool windowsize "$terminal_window" "$terminal_width" "$terminal_height"
 xdotool windowmove "$terminal_window" 24 136
 xdotool windowactivate --sync "$terminal_window"
 sleep 8
-# A fresh account may be asked to create its wallet. Cancel only this wizard
-# in the disposable VM; the installed system retains normal secure storage.
-for attempt in $(seq 1 4); do
-    wallet_window=$(xdotool search --onlyvisible --name '^KDE Wallet Service$' 2>/dev/null | head -1 || true)
-    if [ -z "$wallet_window" ]; then break; fi
-    xdotool windowactivate --sync "$wallet_window"
-    xdotool key Escape
-    sleep 2
-done
+# The wallet wizard is native Wayland. Ask KWin to close that window only,
+# without changing the installed wallet service or secure-storage defaults.
+cat > /tmp/pkos-capture-wallet.js <<'JS'
+for (const window of workspace.windowList()) {
+    if (window.caption === "KDE Wallet Service") {
+        window.closeWindow();
+    }
+}
+JS
+busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting loadScript ss /tmp/pkos-capture-wallet.js pkos-capture-wallet
+busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting start
+sleep 3
+busctl --user call org.kde.KWin /Scripting org.kde.kwin.Scripting unloadScript s pkos-capture-wallet
 xdotool windowactivate --sync "$terminal_window"
 sleep 3
 printf 'Workspace capture ready: Kitty %s, VSCodium %s\n' "$terminal_window" "$editor_window"
