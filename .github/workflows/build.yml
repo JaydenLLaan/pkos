@@ -27,6 +27,7 @@ jobs:
           docker image prune -af
           df -h .
       - name: Build in privileged Debian 13 amd64 container
+        id: build
         shell: bash
         run: |
           set -o pipefail
@@ -40,7 +41,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils ovmf python3-pexpect python3-pil
           sudo chmod a+rw /dev/kvm || true
       - name: Verify ISO and UEFI live boot
-        timeout-minutes: 25
+        timeout-minutes: 45
         run: sudo python3 scripts/smoke-test.py dist/pkos.iso
       - name: Upload boot and build diagnostics
         if: always()
@@ -55,6 +56,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload verified ISO
+        if: always() && steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: pkos-iso

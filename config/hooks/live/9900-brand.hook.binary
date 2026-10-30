@@ -23,6 +23,8 @@ PY
 # A branded background for both the legacy and EFI live menus.
 cp config/includes.chroot/usr/share/wallpapers/pkos-slate/contents/images/2560x1440.png binary/boot/grub/splash.png
 cp config/includes.chroot/usr/share/grub/themes/pkos/theme.txt binary/boot/grub/live-theme/theme.txt
+# The menu is sourced by GRUB before its timeout loop.
+printf '\nset timeout=5\n' >> binary/boot/grub/grub.cfg
 if [ -d binary/isolinux ]; then
   cp binary/boot/grub/splash.png binary/isolinux/splash.png
 fi

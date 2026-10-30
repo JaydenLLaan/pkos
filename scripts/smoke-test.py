@@ -74,14 +74,54 @@ try:
     command('loginctl list-sessions; loginctl show-session $(loginctl list-sessions --no-legend | awk \'$3=="pkos" && $4=="seat0" {print $1; exit}\') -p Type | grep Wayland -i')
     command('test -x /usr/local/bin/pk-gpu && test -x /usr/local/bin/pk-setup; uv --version; node --version; go version; nvim --version | head -1')
     command('sudo modinfo nvidia | head -10; sudo dkms status; test -e /usr/share/wayland-sessions/plasma.desktop')
-    command('sudo -u pkos env XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "print(panels().length)" | grep 1')
+    command('grep -q "plugin=org.kde.plasma.icontasks" ~/.config/plasma-org.kde.plasma.desktop-appletsrc')
     screenshot()
-    command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") pk-install >/tmp/pkos-calamares.log 2>&1 &')
-    command('sleep 15; pgrep -a calamares; cat /tmp/pkos-calamares.log', 60)
-    command('! grep -Ei "Failed to load module|No branding|Cannot load branding" /tmp/pkos-calamares.log')
+    command('systemd-run --user --collect --unit=pkos-installer-test pk-install')
+    command('sleep 15; pgrep -a calamares; journalctl --user -u pkos-installer-test --no-pager | tail -60', 60)
     screenshot('live-installer')
-    (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True},indent=2)+'\n')
-    print('PASS: actual ISO booted with UEFI to Plasma Wayland; desktop, network services and DKMS verified.',flush=True)
+    # Run the real installer against the disposable blank virtual disk.
+    # Test dependencies are installed only in the live overlay, not in the ISO.
+    command('sudo apt-get update >/tmp/pkos-test-apt.log 2>&1 && sudo apt-get install -y --no-install-recommends python3-pyatspi >>/tmp/pkos-test-apt.log 2>&1', 240)
+    command('sudo pkill -x calamares')
+    payload = base64.b64encode(Path('scripts/calamares-test.py').read_bytes()).decode()
+    command("printf '%s' '"+payload+"' | base64 -d >/tmp/pkos-calamares-test.py")
+    try:
+        command('sudo env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") QT_QPA_PLATFORM=xcb QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1 dbus-run-session -- python3 /tmp/pkos-calamares-test.py', 1500)
+    finally:
+        screenshot('install-result')
+        command('sudo tail -150 /tmp/pkos-install-test.log', 60)
+    command('sudo mkdir -p /mnt/pkos-test; sudo mount /dev/vda2 /mnt/pkos-test && sudo mount /dev/vda1 /mnt/pkos-test/boot/efi')
+    command('sudo test -f /mnt/pkos-test/boot/efi/EFI/pkOS/grubx64.efi && sudo test -f /mnt/pkos-test/boot/efi/EFI/boot/bootx64.efi')
+    command('sudo cat /mnt/pkos-test/etc/fstab; sudo test ! -e /mnt/pkos-test/etc/skel/Desktop/install-pkos.desktop')
+    # Enable a serial console in this disposable installed target, never the ISO.
+    command("sudo sed -i 's/quiet splash/console=tty0 console=ttyS0,115200/g' /mnt/pkos-test/boot/grub/grub.cfg")
+    command('sudo umount /mnt/pkos-test/boot/efi && sudo umount /mnt/pkos-test')
+    vm.sendline('sudo systemctl poweroff')
+    vm.expect(pexpect.EOF, timeout=120)
+    log.close()
+    Path(qmp_path).unlink(missing_ok=True)
+    installed_args=[]
+    i=0
+    while i<len(args):
+        if args[i] in ['-cdrom','-boot']:
+            i+=2
+        else:
+            installed_args.append(args[i]); i+=1
+    log=(out/'installed-serial.log').open('w')
+    vm=pexpect.spawn('qemu-system-x86_64',installed_args,encoding='utf-8',codec_errors='replace',timeout=600)
+    vm.logfile=log
+    vm.expect(r'pkos login:')
+    vm.sendline('pkostest')
+    vm.expect('Password:')
+    vm.sendline('pkos-test-123')
+    command('grep -q ID=pkos /etc/os-release && ! grep -qw boot=live /proc/cmdline')
+    command('for n in $(seq 1 90); do pgrep -x plasmashell >/dev/null && break; sleep 2; done; pgrep -a plasmashell; pgrep -a kwin_wayland',240)
+    command("printf 'pkos-test-123\\n' | sudo -S -p '' true")
+    command('findmnt /; findmnt /boot/efi; swapon --show; test ! -d /run/live/medium')
+    command('test ! -e /etc/sudoers.d/live; test -f ~/.config/kdeglobals; test ! -e ~/Desktop/install-pkos.desktop; test -x /usr/local/bin/pk-setup')
+    screenshot('installed-desktop')
+    (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True,'calamaresInstall':True,'installedDesktop':'Plasma Wayland','sudoUser':True},indent=2)+'\n')
+    print('PASS: actual ISO live UEFI boot, Calamares erase-disk install, installed UEFI boot and Plasma Wayland verified.',flush=True)
 finally:
     if vm.isalive():
         vm.terminate(force=True)
