@@ -169,9 +169,9 @@ separate Linux amd64 build machine, mount this clone at `/work` in a privileged
 
 After installation, update with `sudo apt update && sudo apt upgrade`. Keep
 the kernel and NVIDIA module compatible and leave the matching headers
-installed. OS identity may be refreshed by an upstream base-files upgrade;
-the canonical pkOS identity is in the branding hook. Review upstream release
-and security notes before major suite changes.
+installed. Branding files use local dpkg diversions to preserve pkOS identity
+across base-files upgrades. Review upstream release and security notes before
+major suite changes.
 
 ## Technical references
 

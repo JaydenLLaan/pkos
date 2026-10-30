@@ -26,6 +26,6 @@ cp config/includes.chroot/usr/share/grub/themes/pkos/theme.txt binary/boot/grub/
 # The menu is sourced by GRUB before its timeout loop.
 printf '\nset timeout=5\n' >> binary/boot/grub/grub.cfg
 if [ -d binary/isolinux ]; then
-  cp binary/boot/grub/splash.png binary/isolinux/splash.png
+  convert binary/boot/grub/splash.png -resize '640x480!' binary/isolinux/splash.png
 fi
 

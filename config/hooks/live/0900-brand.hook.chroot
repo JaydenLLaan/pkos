@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 # Apply late: base-files and package hooks must see the original base identity.
+for path in /usr/lib/os-release /etc/issue /etc/issue.net /etc/motd; do
+  dpkg-divert --local --add --rename --divert "${path}.pkbase" "$path"
+done
 rm -f /etc/os-release
 cat > /usr/lib/os-release <<'EOF'
 NAME="pkOS"
