@@ -18,7 +18,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: pkos-${{ github.ref }}-${{ inputs.test_existing_run || 'build' }}
+  group: pkos-${{ github.ref }}-${{ inputs.test_existing_run || 'build' }}-${{ inputs.live_workspace && 'workspace' || 'full' }}
   cancel-in-progress: false
 jobs:
   iso:
@@ -27,7 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Free runner space
-        if: inputs.test_existing_run == ''
         shell: bash
         run: |
           # Only disposable, preinstalled SDKs on this ephemeral GitHub runner.
@@ -52,12 +51,11 @@ jobs:
             bash scripts/build.sh 2>&1 | tee dist/build.log
       - name: Download existing candidate for testing
         if: inputs.test_existing_run != ''
-        uses: actions/download-artifact@v4
-        with:
-          name: pkos-iso
-          path: dist
-          github-token: ${{ github.token }}
-          run-id: ${{ inputs.test_existing_run }}
+        timeout-minutes: 15
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PKOS_CANDIDATE_RUN: ${{ inputs.test_existing_run }}
+        run: gh run download "$PKOS_CANDIDATE_RUN" --repo "$GITHUB_REPOSITORY" --name pkos-iso --dir dist
       - name: Check downloaded or built checksum
         run: cd dist && sha256sum -c pkos.iso.sha256
       - name: Install VM test tools
