@@ -8,7 +8,7 @@
 - [ ] NVIDIA DKMS compiled against every shipped kernel; `modinfo` works.
 - [ ] The actual ISO booted with OVMF, with no Secure Boot.
 - [ ] Live user can log in; Plasma and KWin Wayland are running.
-- [ ] NetworkManager, Bluetooth and SDDM services are active.
+- [ ] NetworkManager and SDDM are active; Bluetooth is enabled (VM has no radio).
 - [ ] Desktop has the pkOS panel; screenshot saved as a diagnostic artifact.
 - [ ] uv, Node, Go and Neovim run in the booted environment.
 

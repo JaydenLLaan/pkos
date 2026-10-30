@@ -70,7 +70,7 @@ try:
         vm.sendline('live')
     command('sudo -n true')
     command('test -d /sys/firmware/efi && grep -q \'ID=pkos\' /etc/os-release')
-    command('systemctl is-active NetworkManager bluetooth sddm')
+    command('systemctl is-active NetworkManager sddm; systemctl is-enabled bluetooth')
     command('for n in $(seq 1 90); do pgrep -x plasmashell >/dev/null && break; sleep 2; done; pgrep -a plasmashell; pgrep -a kwin_wayland', 240)
     command('loginctl list-sessions; loginctl show-session $(loginctl list-sessions --no-legend | awk \'$3=="pkos" && $4=="seat0" {print $1; exit}\') -p Type | grep Wayland -i')
     command('test -x /usr/local/bin/pk-gpu && test -x /usr/local/bin/pk-setup; uv --version; node --version; go version; nvim --version | head -1')
