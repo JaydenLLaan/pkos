@@ -4,8 +4,14 @@ on:
     branches: [main]
     paths-ignore: ['**.md']
   workflow_dispatch:
+    inputs:
+      test_existing_run:
+        description: 'Optional prior run ID: re-test its ISO without rebuilding (test-only source changes)'
+        required: false
+        type: string
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: pkos-${{ github.ref }}
   cancel-in-progress: false
@@ -16,6 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Free runner space
+        if: inputs.test_existing_run == ''
         shell: bash
         run: |
           # Only disposable, preinstalled SDKs on this ephemeral GitHub runner.
@@ -28,6 +35,7 @@ jobs:
           df -h .
       - name: Build in privileged Debian 13 amd64 container
         id: build
+        if: inputs.test_existing_run == ''
         shell: bash
         run: |
           set -o pipefail
@@ -35,6 +43,16 @@ jobs:
           docker run --name pkos-builder --privileged --platform linux/amd64 \
             -v "$PWD:/work" -w /work debian:trixie \
             bash scripts/build.sh 2>&1 | tee dist/build.log
+      - name: Download existing candidate for testing
+        if: inputs.test_existing_run != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: pkos-iso
+          path: dist
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.test_existing_run }}
+      - name: Check downloaded or built checksum
+        run: cd dist && sha256sum -c pkos.iso.sha256
       - name: Install VM test tools
         run: |
           sudo apt-get update
@@ -56,7 +74,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload verified ISO
-        if: always() && steps.build.outcome == 'success'
+        if: always() && (steps.build.outcome == 'success' || inputs.test_existing_run != '')
         uses: actions/upload-artifact@v4
         with:
           name: pkos-iso

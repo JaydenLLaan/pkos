@@ -81,7 +81,7 @@ try:
     screenshot('live-installer')
     # Run the real installer against the disposable blank virtual disk.
     # Test dependencies are installed only in the live overlay, not in the ISO.
-    command('sudo apt-get update >/tmp/pkos-test-apt.log 2>&1 && sudo apt-get install -y --no-install-recommends python3-pyatspi >>/tmp/pkos-test-apt.log 2>&1', 240)
+    command('sudo apt-get update >/tmp/pkos-test-apt.log 2>&1 && sudo apt-get install -y --no-install-recommends python3-pyatspi xdotool >>/tmp/pkos-test-apt.log 2>&1', 240)
     command('sudo pkill -x calamares')
     payload = base64.b64encode(Path('scripts/calamares-test.py').read_bytes()).decode()
     command("printf '%s' '"+payload+"' | base64 -d >/tmp/pkos-calamares-test.py")
