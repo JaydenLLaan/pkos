@@ -43,6 +43,8 @@ fi
 python3 - <<'PY'
 from pathlib import Path
 import os
+import re
+import colorsys
 for path in Path('/usr/share/icons/Papirus').glob('*/places/*.svg'):
     if path.is_symlink():
         target=os.readlink(path)
@@ -50,6 +52,31 @@ for path in Path('/usr/share/icons/Papirus').glob('*/places/*.svg'):
         if grey != target and (path.parent/grey).exists():
             path.unlink()
             path.symlink_to(grey)
+# Keep Papirus' shapes, with a restrained slate rendition for pinned apps.
+# Use its terminal glyph instead of Kitty's cat illustration.
+terminal=Path('/usr/share/applications/kitty.desktop')
+if terminal.exists():
+    terminal.write_text(terminal.read_text().replace('Icon=kitty','Icon=utilities-terminal'))
+names={'org.kde.dolphin','dolphin','system-file-manager','utilities-terminal',
+       'vscodium','firefox','firefox-esr','systemsettings','preferences-system'}
+seen=set()
+def muted(match):
+    value=match.group()[1:]
+    r,g,b=(int(value[i:i+2],16)/255 for i in (0,2,4))
+    h,s,v=colorsys.rgb_to_hsv(r,g,b)
+    if s < .12:
+        return match.group()
+    # Retain light/dark detail while removing saturated product colours.
+    if v < .3: return '#17212b'
+    if v < .55: return '#596674'
+    if v < .85: return '#8babc0'
+    return '#b4c8d6'
+for path in Path('/usr/share/icons/Papirus').glob('*/apps/*.svg'):
+    if path.stem in names:
+        real=path.resolve()
+        if real in seen or not real.is_file(): continue
+        seen.add(real)
+        real.write_text(re.sub(r'#[0-9a-fA-F]{6}\b',muted,real.read_text()))
 PY
 # uv is isolated from the system Python and available to every user.
 python3 -m venv /opt/pkos/uv

@@ -64,6 +64,11 @@ def screenshot(name='live-desktop'):
     sock.close()
     Image.open(out/(name+'.ppm')).save(out/(name+'.png'))
 
+def settle_desktop():
+    # First-login autostarts and KConfig's delayed writes can lag plasmashell.
+    command('for n in $(seq 1 60); do pgrep -f "python3 /usr/share/pkos/welcome.py" >/dev/null && break; sleep 1; done; pgrep -af welcome.py; pkill -f "python3 /usr/share/pkos/welcome.py"; sleep 12',90)
+    command('cat ~/.config/plasma-org.kde.plasma.desktop-appletsrc; ls -la ~/Desktop; busctl --user get-property org.kde.KWin /Effects org.kde.kwin.Effects loadedEffects')
+
 try:
     vm.expect(r'pkos login:')
     vm.sendline('pkos')
@@ -84,7 +89,7 @@ try:
     command('test "$(grep -c "^plugin=org.kde.panel$" ~/.config/plasma-org.kde.plasma.desktop-appletsrc)" -eq 2 && grep -q "plugin=org.pkos.wordmark" ~/.config/plasma-org.kde.plasma.desktop-appletsrc && ! grep -q "plugin=org.kde.plasma.appmenu" ~/.config/plasma-org.kde.plasma.desktop-appletsrc')
     command('grep -q "Theme=Papirus-Dark" ~/.config/kdeglobals && grep -q "theme=__aurorae__svg__pkos" ~/.config/kwinrc; fc-match Inter; fc-match "JetBrains Mono"')
     screenshot('live-welcome')
-    command('pkill -f /usr/share/pkos/welcome.py; sleep 5')
+    settle_desktop()
     command('ls /usr/share/applications/*cod*; grep -H "^Icon=" /usr/share/applications/*cod*; cat ~/.config/kxkbrc 2>/dev/null; cat /etc/default/keyboard; true')
     screenshot()
     # Autologin does not render the greeter; preview its QML without logging out.
@@ -143,16 +148,19 @@ try:
     command('grep -q "LayoutList=gb" ~/.config/kxkbrc')
     command('test ! -e /etc/sudoers.d/live; test -f ~/.config/kdeglobals; test ! -e ~/Desktop/install-pkos.desktop; test -x /usr/local/bin/pk-setup')
     screenshot('installed-welcome')
-    command('pkill -f /usr/share/pkos/welcome.py; sleep 5')
+    settle_desktop()
     screenshot('installed-desktop')
-    command('test "$(grep -c "^plugin=org.kde.panel$" ~/.config/plasma-org.kde.plasma.desktop-appletsrc)" -eq 2 && test -z "$(find ~/Desktop -maxdepth 1 -type f -print -quit)"')
+    command('test "$(grep -c "^plugin=org.kde.panel$" ~/.config/plasma-org.kde.plasma.desktop-appletsrc)" -eq 2 && test -z "$(find ~/Desktop -maxdepth 1 -type f ! -name .directory -print -quit)"')
+    command('busctl --user get-property org.kde.KWin /Effects org.kde.kwin.Effects loadedEffects | grep kwin4_effect_shapecorners')
     # Position these two applications only in the disposable screenshot guest.
     command('sudo -n apt-get update >/tmp/pkos-shot-apt.log 2>&1 && sudo -n apt-get install -y --no-install-recommends xdotool >>/tmp/pkos-shot-apt.log 2>&1',240)
     payload = base64.b64encode(zlib.compress(Path('scripts/capture-workspace.sh').read_bytes())).decode()
     command("printf '%s' '"+payload+"' | base64 -d | python3 -c 'import sys,zlib; sys.stdout.buffer.write(zlib.decompress(sys.stdin.buffer.read()))' >/tmp/pkos-capture-workspace.sh")
-    command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") bash /tmp/pkos-capture-workspace.sh',180)
-    screenshot('installed-workspace')
-    command('qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects.loadedEffects || true')
+    try:
+        command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") bash /tmp/pkos-capture-workspace.sh',180)
+    finally:
+        screenshot('installed-workspace')
+        command('journalctl --user -u pkos-shot-terminal -u pkos-shot-editor --no-pager | tail -80')
     (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True,'calamaresInstall':True,'installedDesktop':'Plasma Wayland','sudoUser':True,'twoPanelLayout':True,'installedWorkspaceScreenshot':True},indent=2)+'\n')
     print('PASS: actual ISO live UEFI boot, Calamares erase-disk install, installed UEFI boot and Plasma Wayland verified.',flush=True)
 finally:

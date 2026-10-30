@@ -17,6 +17,6 @@ jobs:
         if: always()
         with:
           name: sddm-preview
-          path: test-results/sddm-preview.*
+          path: test-results/*preview.*
           if-no-files-found: ignore
           retention-days: 14

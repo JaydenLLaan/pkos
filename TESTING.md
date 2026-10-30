@@ -9,13 +9,29 @@
 - [ ] The actual ISO booted as a raw USB mass-storage disk with OVMF, without Secure Boot.
 - [ ] Live user can log in; Plasma and KWin Wayland are running.
 - [ ] NetworkManager and SDDM are active; Bluetooth is enabled (VM has no radio).
-- [ ] Desktop has the pkOS panel; screenshot saved as a diagnostic artifact.
+- [ ] Desktop has exactly two panels and the pkOS wordmark, without a global menu.
 - [ ] SDDM theme renders in its test mode, independently of desktop autologin.
 - [ ] uv, Node, Go and Neovim run in the booted environment.
 - [ ] Calamares completes an erase-disk install on a disposable 48 GiB disk.
 - [ ] The installed disk boots with the ISO detached, into Plasma Wayland.
 - [ ] Installed user has sudo, swap is active, EFI and root are mounted, and
       the live installer launcher is gone.
+- [ ] Installed Desktop directory is empty; Kitty and VSCodium both open.
+- [ ] Diagnostic screenshots: `live-desktop.png`, `sddm-theme.png`,
+      `live-installer.png`, `installed-desktop.png`, `installed-workspace.png`.
+
+## Visual acceptance
+
+- [ ] Top bar is 28px, wordmark left, tray and clock right; no global menu.
+- [ ] Dock is centred, floating, fitted to its icons, and always visible.
+- [ ] Files, Kitty, VSCodium, Firefox and Settings are pinned; running apps have dots.
+- [ ] Left circle controls, 12px corners and thin borders; no excessive shadows/blur.
+- [ ] Inter UI, JetBrains Mono code, Papirus-Dark icons and consistent cursor.
+- [ ] Slate palette in Qt, GTK, editor, terminal, login, installer and boot screens.
+- [ ] Wallpaper wordmark is quiet, top-left, and fully visible.
+- [ ] Live desktop has only Install pkOS; installed desktop has no icons.
+- [ ] Kitty prompt shows branch and muted dirty-worktree marker correctly.
+- [ ] Calamares has no light-grey surfaces or unreadable text in any step.
 
 CI has no RTX 3050, Wi-Fi radio, trackpad or Acer firmware. A successful build
 does not claim those physical checks have passed. Record observations below.

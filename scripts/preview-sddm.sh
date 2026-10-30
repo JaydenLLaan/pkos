@@ -31,3 +31,4 @@ xvfb-run -a -s '-screen 0 1280x800x24' bash -c '
 '
 cat test-results/sddm-preview.log
 ! grep -Ei 'Unexpected token|theme cannot be loaded|Failed to load.*theme|Main.qml:[0-9]+:[0-9]+:' test-results/sddm-preview.log
+bash scripts/preview-frames.sh

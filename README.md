@@ -118,7 +118,8 @@ the live desktop has only the installer launcher.
 
 Qt, GTK, Firefox, VSCodium, Kitty, SDDM, Calamares, Plymouth and GRUB share the
 dark palette. Inter is the UI font and JetBrains Mono the code/terminal font.
-Papirus-Dark is the icon family, with grey folders; Breeze supplies the cursor.
+Papirus-Dark is the icon family, with grey folders and slate-coloured pinned
+icons; the terminal uses Papirus' plain terminal glyph. Breeze supplies the cursor.
 Kitty is the default terminal, with a compact Git-aware prompt and a muted
 dirty-worktree marker. Defaults are staged through `/etc/skel`, `/etc/xdg`,
 system configuration and live-build hooks, so they apply to fresh installations.
@@ -219,6 +220,8 @@ files are preserved. User-facing pkOS artwork and configuration are original.
   GTK overrides and configuration: [MIT](LICENSE).
 - [Papirus icon theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme):
   GPL-3.0; shipped by the distribution package with its copyright notices.
+  pkOS modifies pinned application SVG colours to a muted slate palette and
+  selects the theme's grey folder variants. Original icon shapes are retained.
 - [Breeze](https://invent.kde.org/plasma/breeze) and
   [Breeze GTK](https://invent.kde.org/plasma/breeze-gtk): KDE's open-licensed
   widget engine and GTK base; their installed package copyright files retain

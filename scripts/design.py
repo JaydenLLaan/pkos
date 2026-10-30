@@ -39,6 +39,8 @@ def frame(prefix, x=0, y=0, radius=12, color=SURFACE, opacity=1, border=BORDER, 
         pieces.append(f'<g id="{stem}{name}" transform="translate({x+dx} {y+dy})"><g transform="rotate({rotation} {r/2} {r/2})"><path d="{shape}" fill="{color}" fill-opacity="{alpha}"/>{outline}</g></g>')
     for side in ['top','bottom','left','right']:
         pieces.append(f'<rect id="{stem}hint-{side}-margin" x="{x+100}" y="{y+100}" width="{margins}" height="{margins}" fill="#000"/>')
+    # Stretch the strips once; tiling them exposes raster seams every 64px.
+    pieces.append(f'<rect id="{stem}hint-stretch-borders" x="{x+112}" y="{y+112}" width="1" height="1"/>')
     return pieces
 
 def deploy(root):
