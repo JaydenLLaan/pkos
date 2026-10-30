@@ -19,6 +19,10 @@ EOF
     rm -f /etc/apt/sources.list.d/vscodium.sources
   fi
 fi
+if ! command -v codium >/dev/null; then
+  sed -i 's|applications:codium.desktop|applications:org.kde.kate.desktop|g' \
+    /usr/share/plasma/look-and-feel/org.pkos.desktop/contents/layouts/org.kde.plasma.desktop-layout.js
+fi
 # uv is isolated from the system Python and available to every user.
 python3 -m venv /opt/pkos/uv
 /opt/pkos/uv/bin/pip install --no-cache-dir uv

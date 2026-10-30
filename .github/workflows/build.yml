@@ -26,11 +26,13 @@ jobs:
         shell: bash
         run: |
           # Only disposable, preinstalled SDKs on this ephemeral GitHub runner.
-          sudo python3 - <<'PY'
+          if [ "$(df --output=avail -B1 . | tail -1)" -lt 30000000000 ]; then
+            sudo python3 - <<'PY'
           import shutil
-          for path in ('/usr/local/lib/android', '/opt/ghc', '/usr/share/dotnet', '/opt/hostedtoolcache/CodeQL'):
+          for path in ('/usr/local/lib/android', '/opt/ghc', '/usr/share/dotnet'):
               shutil.rmtree(path, ignore_errors=True)
           PY
+          fi
           docker image prune -af
           df -h .
       - name: Build in privileged Debian 13 amd64 container

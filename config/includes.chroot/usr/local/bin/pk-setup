@@ -30,12 +30,19 @@ install_rust() {
   curl -fL --retry 2 --max-time 120 https://sh.rustup.rs -o "$temporary/rustup.sh" &&
     sh "$temporary/rustup.sh" -y --profile minimal --no-modify-path
 }
-if ! command -v rustup >/dev/null; then step 'Installing Rust (minimal stable toolchain)' install_rust; fi
+if ! command -v rustup >/dev/null; then
+  step 'Installing Rust (minimal stable toolchain)' install_rust
+elif ! rustup show active-toolchain >/dev/null 2>&1; then
+  step 'Repairing the Rust toolchain' rustup toolchain install stable --profile minimal
+  step 'Selecting stable Rust' rustup default stable
+fi
 install_ollama() {
   curl -fL --retry 2 --max-time 120 https://ollama.com/install.sh -o "$temporary/ollama.sh" &&
     sudo sh "$temporary/ollama.sh"
 }
-if ! command -v ollama >/dev/null; then step 'Installing Ollama' install_ollama; fi
+if ! command -v ollama >/dev/null || ! systemctl cat ollama.service >/dev/null 2>&1; then
+  step 'Installing Ollama' install_ollama
+fi
 if command -v ollama >/dev/null; then step 'Starting Ollama' sudo systemctl enable --now ollama; fi
 if ! dpkg-query -W -f='${Status}' nvidia-cuda-toolkit 2>/dev/null | grep -q 'install ok installed'; then
   if ask 'Install the optional CUDA development toolkit? (Several GB; Ollama does not require it.)'; then

@@ -14,7 +14,7 @@ lb config noauto \
   --mirror-binary https://deb.debian.org/debian \
   --mirror-chroot-security https://security.debian.org/debian-security \
   --mirror-binary-security https://security.debian.org/debian-security \
-  --chroot-squashfs-compression-type xz --chroot-squashfs-compression-level 6 \
+  --chroot-squashfs-compression-type xz \
   --iso-application pkOS --iso-publisher pkOS --iso-preparer pkOS \
   --iso-volume PKOS_LIVE --image-name pkos \
   --bootappend-live 'boot=live components username=pkos hostname=pkos locales=en_GB.UTF-8 keyboard-layouts=gb timezone=Europe/London nvidia-drm.modeset=1 console=tty0 console=ttyS0,115200 quiet splash' \

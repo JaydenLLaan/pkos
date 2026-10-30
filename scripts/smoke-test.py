@@ -25,7 +25,7 @@ qmp_path = str(out/'qmp.sock')
 if Path(qmp_path).exists():
     Path(qmp_path).unlink()
 accel = 'kvm' if os.access('/dev/kvm', os.R_OK | os.W_OK) else 'tcg'
-args = ['-machine','q35','-accel',accel,'-cpu','max','-smp','2','-m','6144',
+args = ['-machine','q35','-accel',accel,'-cpu','max','-smp','2','-m','4096',
         '-drive',f'if=pflash,format=raw,readonly=on,file={code}',
         '-drive',f'if=pflash,format=raw,file={variables}',
         '-drive',f'file={disk},format=qcow2,if=virtio',
