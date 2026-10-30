@@ -1,0 +1,22 @@
+name: Preview SDDM theme
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render theme in Debian 13 without building an ISO
+        run: |
+          mkdir -p test-results
+          docker run --rm -v "$PWD:/work" -w /work debian:trixie bash scripts/preview-sddm.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sddm-preview
+          path: test-results/sddm-preview.*
+          if-no-files-found: ignore
+          retention-days: 14
