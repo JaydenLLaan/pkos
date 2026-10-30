@@ -20,4 +20,10 @@ for root in ('binary/boot/grub','binary/isolinux'):
                 text+='\n'+safe+'\n'
         p.write_text(text)
 PY
+# A branded background for both the legacy and EFI live menus.
+cp config/includes.chroot/usr/share/wallpapers/pkos-slate/contents/images/2560x1440.png binary/boot/grub/splash.png
+cp config/includes.chroot/usr/share/grub/themes/pkos/theme.txt binary/boot/grub/live-theme/theme.txt
+if [ -d binary/isolinux ]; then
+  cp binary/boot/grub/splash.png binary/isolinux/splash.png
+fi
 

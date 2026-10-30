@@ -45,12 +45,12 @@ def command(text, timeout=120):
         raise RuntimeError(f'Guest command exited {rc}: {text}')
     return output
 
-def screenshot():
+def screenshot(name='live-desktop'):
     sock = socket.socket(socket.AF_UNIX)
     sock.connect(qmp_path)
     stream = sock.makefile('rwb', buffering=0)
     stream.readline()
-    for request in [{'execute':'qmp_capabilities'}, {'execute':'screendump','arguments':{'filename':str(out/'live-desktop.ppm')}}]:
+    for request in [{'execute':'qmp_capabilities'}, {'execute':'screendump','arguments':{'filename':str(out/(name+'.ppm'))}}]:
         stream.write((json.dumps(request)+'\n').encode())
         while True:
             msg = json.loads(stream.readline())
@@ -59,7 +59,7 @@ def screenshot():
                     raise RuntimeError(msg)
                 break
     sock.close()
-    Image.open(out/'live-desktop.ppm').save(out/'live-desktop.png')
+    Image.open(out/(name+'.ppm')).save(out/(name+'.png'))
 
 try:
     vm.expect(r'pkos login:')
@@ -76,6 +76,10 @@ try:
     command('sudo modinfo nvidia | head -10; sudo dkms status; test -e /usr/share/wayland-sessions/plasma.desktop')
     command('sudo -u pkos env XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "print(panels().length)" | grep 1')
     screenshot()
+    command('env $(systemctl --user show-environment | grep -E "^(DISPLAY|XAUTHORITY)=") pk-install >/tmp/pkos-calamares.log 2>&1 &')
+    command('sleep 15; pgrep -a calamares; cat /tmp/pkos-calamares.log', 60)
+    command('! grep -Ei "Failed to load module|No branding|Cannot load branding" /tmp/pkos-calamares.log')
+    screenshot('live-installer')
     (out/'boot-result.json').write_text(json.dumps({'uefi':True,'liveDesktop':'Plasma Wayland','serialLogin':True,'nvidiaDKMS':True},indent=2)+'\n')
     print('PASS: actual ISO booted with UEFI to Plasma Wayland; desktop, network services and DKMS verified.',flush=True)
 finally:
