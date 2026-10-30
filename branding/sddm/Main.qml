@@ -1,9 +1,22 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-Rectangle {
+Pane {
     width: 1920
     height: 1080
-    color: "#10151b"
+    padding: 0
+    font.family: "Inter"
+    font.pixelSize: 14
+    palette.window: "#10151b"
+    palette.windowText: "#edf2f7"
+    palette.base: "#1f2b36"
+    palette.text: "#edf2f7"
+    palette.button: "#253443"
+    palette.buttonText: "#edf2f7"
+    palette.highlight: "#41586a"
+    palette.highlightedText: "#edf2f7"
+    background: Rectangle {
+        color: "#10151b"
+    }
     Image {
         anchors.fill: parent
         source: "/usr/share/wallpapers/pkos-slate/contents/images/2560x1440.png"
@@ -29,6 +42,7 @@ Rectangle {
                 id: username
                 width: parent.width
                 placeholderText: "Username"
+                placeholderTextColor: "#9baab9"
                 text: userModel.lastUser
                 font.family: "Inter"
                 font.pixelSize: 16
@@ -44,6 +58,7 @@ Rectangle {
                 id: password
                 width: parent.width
                 placeholderText: "Password"
+                placeholderTextColor: "#9baab9"
                 echoMode: TextInput.Password
                 focus: true
                 font.pixelSize: 16

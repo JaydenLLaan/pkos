@@ -7,7 +7,9 @@ apt-get install -y --no-install-recommends sddm xvfb xauth imagemagick \
   qml6-module-qtquick-layouts qml6-module-qtqml-workerscript \
   qml6-module-qtquick-window qml6-module-qt5compat-graphicaleffects
 useradd -m -u 1000 -s /bin/bash pkos
-mkdir -p /tmp/pkos-theme /usr/share/wayland-sessions /usr/share/wallpapers/pkos-slate/contents/images
+# SessionModel uses this directory's existence to list Wayland sessions;
+# software rendering below needs no physical GPU for the preview fixture.
+mkdir -p /dev/dri /tmp/pkos-theme /usr/share/wayland-sessions /usr/share/wallpapers/pkos-slate/contents/images
 cp branding/sddm/* /tmp/pkos-theme/
 rsvg-convert -w 320 branding/wordmark.svg -o /tmp/pkos-theme/wordmark.png
 rsvg-convert -w 2560 -h 1440 branding/wallpapers/slate.svg -o /usr/share/wallpapers/pkos-slate/contents/images/2560x1440.png
