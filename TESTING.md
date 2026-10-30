@@ -88,3 +88,8 @@ does not claim those physical checks have passed. Record observations below.
 
 Date / commit / hardware / test / result / notes:
 
+2026-10-30 / `d2b3606` image / QEMU-OVMF amd64, 1920×1080 / full restyle
+live-install-reboot suite / PASS / [build run](https://github.com/JaydenLLaan/pkos/actions/runs/41070305797),
+[final screenshots and repeat verification](https://github.com/JaydenLLaan/pkos/actions/runs/41073360494).
+The physical-hardware checklist above remains for the Acer owner to complete.
+

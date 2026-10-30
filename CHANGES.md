@@ -40,6 +40,22 @@
 - Follow the editor package's canonical desktop ID so its running window
   groups with the pinned dock icon after the upstream desktop-entry rename.
 
+### Restyle release verification — 2026-10-30
+
+- Clean x86_64 build and full tests passed in [Actions run 41070305797](https://github.com/JaydenLLaan/pkos/actions/runs/41070305797),
+  image source `d2b360634423df973693467d25d02db1f1b2436c`.
+- The identical ISO passed the complete suite again in [run 41073360494](https://github.com/JaydenLLaan/pkos/actions/runs/41073360494),
+  with the final 1920×1080 live, installed workspace, login and installer captures.
+- Verified raw USB UEFI boot, Plasma Wayland, NVIDIA DKMS, both panels, Calamares
+  erase-disk installation, installed boot with the USB detached, sudo, swap,
+  GB keyboard, empty installed desktop and active 12px corner effect.
+- Kitty and VSCodium opened together; the editor groups with its pinned icon.
+  Screenshot-only sample files and wallet-wizard dismissal remain in the test VM.
+- ISO: 1,975,844,864 bytes, downloaded with `gh run download` and verified locally.
+- SHA256: `b8739d60c135cc75bb937c6485683be4d9de4ca8c86b04848ff4868085149853`.
+- Physical Acer checks and optional encrypted-install acceptance remain manual,
+  as before. The base system, drivers, tools and installer options are retained.
+
 ## Future changes
 
 Append dated changes, affected files, build run and verification here.
