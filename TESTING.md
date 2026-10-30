@@ -10,6 +10,7 @@
 - [ ] Live user can log in; Plasma and KWin Wayland are running.
 - [ ] NetworkManager and SDDM are active; Bluetooth is enabled (VM has no radio).
 - [ ] Desktop has the pkOS panel; screenshot saved as a diagnostic artifact.
+- [ ] SDDM theme renders in its test mode, independently of desktop autologin.
 - [ ] uv, Node, Go and Neovim run in the booted environment.
 - [ ] Calamares completes an erase-disk install on a disposable 48 GiB disk.
 - [ ] The installed disk boots with the ISO detached, into Plasma Wayland.
@@ -49,7 +50,7 @@ does not claim those physical checks have passed. Record observations below.
 - [ ] Reboot without USB reaches GRUB and installed Plasma Wayland.
 - [ ] Normal user has sudo; no live user's passwordless sudo remains.
 - [ ] `/run/live/medium` is absent, and installed initramfs has no live boot.
-- [ ] `findmnt /`, `findmnt /boot/efi`, `swapon --show` look correct.
+- [ ] `findmnt /`, `findmnt /boot/efi`, `sudo swapon --show` look correct.
 - [ ] NVIDIA works after installed boot and after a kernel update/reboot.
 - [ ] Encryption variant: GRUB accepts passphrase, root unlocks and swap lives
       inside the encrypted root. No world-readable keyfiles/initramfs.
