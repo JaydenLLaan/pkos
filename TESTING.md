@@ -6,7 +6,7 @@
 - [ ] A clean amd64 Trixie live-build completed; SHA256 emitted.
 - [ ] xorriso reports UEFI El Torito boot and a hybrid system area.
 - [ ] NVIDIA DKMS compiled against every shipped kernel; `modinfo` works.
-- [ ] The actual ISO booted with OVMF, with no Secure Boot.
+- [ ] The actual ISO booted as a raw USB mass-storage disk with OVMF, without Secure Boot.
 - [ ] Live user can log in; Plasma and KWin Wayland are running.
 - [ ] NetworkManager and SDDM are active; Bluetooth is enabled (VM has no radio).
 - [ ] Desktop has the pkOS panel; screenshot saved as a diagnostic artifact.

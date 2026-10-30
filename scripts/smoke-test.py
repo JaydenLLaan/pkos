@@ -29,7 +29,9 @@ args = ['-machine','q35','-accel',accel,'-cpu','max','-smp','2','-m','4096',
         '-drive',f'if=pflash,format=raw,readonly=on,file={code}',
         '-drive',f'if=pflash,format=raw,file={variables}',
         '-drive',f'file={disk},format=qcow2,if=virtio',
-        '-cdrom',str(iso),'-boot','d','-vga','virtio',
+        '-device','qemu-xhci,id=xhci',
+        '-drive',f'if=none,format=raw,readonly=on,id=liveusb,file={iso}',
+        '-device','usb-storage,bus=xhci.0,drive=liveusb,bootindex=1','-vga','virtio',
         '-device','virtio-rng-pci','-netdev','user,id=net0','-device','virtio-net-pci,netdev=net0',
         '-display','none','-serial','stdio','-qmp',f'unix:{qmp_path},server=on,wait=off','-no-reboot']
 log = (out/'live-serial.log').open('w')
@@ -106,7 +108,9 @@ try:
     installed_args=[]
     i=0
     while i<len(args):
-        if args[i] in ['-cdrom','-boot']:
+        if args[i] == '-drive' and 'id=liveusb' in args[i+1]:
+            i+=2
+        elif args[i] == '-device' and args[i+1].startswith('usb-storage,'):
             i+=2
         else:
             installed_args.append(args[i]); i+=1
